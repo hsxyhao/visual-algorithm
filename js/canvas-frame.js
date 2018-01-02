@@ -7,24 +7,9 @@ let DEFAULT = {
 	lineWeight:2,
 	lineColor:'#000'
 }
-let CanvasUtil = {
-	setLineColor:function(ctx,value){
-		ctx.lineColor = value;
-	},
-	setLineWeight:function(ctx,value){
-		ctx.lineWeight = value;
-	},
-	fillRect:function(ctx,x,y,width,height){
-		ctx.fillRect(x,y,width,height);
-	},
-	setFillColor:function(ctx,color){
-		ctx.fillStyle = color;
-	}
-}
 
 function CFrame(config){
 	this.init(config);
-	this.isRunning = true;
 }
 
 CFrame.prototype.setCanvasStyle = function(style){
@@ -34,9 +19,19 @@ CFrame.prototype.setCanvasStyle = function(style){
 	}
 }
 
+CFrame.prototype.start = function(callback){
+	let interval = setInterval(() => {
+		if (this.isRunning) {
+			callback();
+		}
+	},40);
+	return interval;
+}
+
 CFrame.prototype.render = function(data){
 	let ctx = this.ctx;
 	let w = this.width / data.length; 
+	let CanvasUtil = this.CanvasUtil;
 	let y = 0,value = 0;
 	ctx.clearRect(0,0,this.width,this.height);
 	for(let i = 0; i < data.length; i++){
@@ -57,11 +52,12 @@ CFrame.prototype.initTitle = function(title){
 	let div = document.createElement('div');
 	div.style.cssText = 'text-align:center';
 	div.textContent = title;
+	this.title = div;
 	this.parent.insertBefore(div,this.canvas);
 }
 
 CFrame.prototype.init = function(con) {
-	let initConfig = con || DEFAULT;
+	let initConfig = con || this.config || DEFAULT;
 	this.width = initConfig.width || DEFAULT.width;
 	this.height = initConfig.height || DEFAULT.height;
 	this.padding = initConfig.padding || DEFAULT.padding;
@@ -86,7 +82,26 @@ CFrame.prototype.init = function(con) {
 	canvas.width = this.width - this.padding * 2; 
 	canvas.height = this.height - this.padding * 2;
 
+	this.CanvasUtil = {
+		setLineColor:function(ctx,value){
+			ctx.lineColor = value;
+		},
+		setLineWeight:function(ctx,value){
+			ctx.lineWeight = value;
+		},
+		fillRect:function(ctx,x,y,width,height){
+			ctx.fillRect(x,y,width,height);
+		},
+		setFillColor:function(ctx,color){
+			ctx.fillStyle = color;
+		}
+	};
+	
+	this.isRunning = true;
+	this.k = 1;
+
 	this.canvas = canvas;
+	let CanvasUtil = this.CanvasUtil;
 	//初始化canvas样式
 	CanvasUtil.setLineColor(this.ctx,this.style.lineColor);
 	CanvasUtil.setLineWeight(this.ctx,this.style.lineWeight);
