@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>算法可视化</title>
+	<style type="text/css">
+		
+		.canvas-box{
+			width: 500px;
+			height: 500px;
+			margin: 0 auto;
+		}
+
+	</style>
+	<script type="text/javascript" src="js/algo-canvas.js"></script>
+</head>
+<body>
+	
+	<div class="canvas-box">
+		<canvas id="canvas">当前浏览器不支持canvas</canvas>
+	</div>
+	<script type="text/javascript">
+		var cFrame = new CFrame({
+			parent:'.canvas-box',
+			title:'算法可视化'
+		});
+		let data = [];
+		for(let i = 0; i < 100; i++){
+			data[data.length] = 100;
+		}
+		cFrame.setCanvasStyle({
+			fillStyle:'#33B6FC'
+		});
+		let interval = setInterval(() => {
+			if (cFrame.isRunning) {
+				data.sort((a,b)=>{
+					return a -b;
+				});
+				cFrame.render(data);
+				for(let i = 0; i < data.length; i++){
+					if (data[i] > 0) {
+						let j = Math.floor(Math.random() * data.length);
+						data[i] -= 1;
+						data[j] += 1;
+					}
+				}
+			}
+		},1);
+	</script>
+
+</body>
+</html>
