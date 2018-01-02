@@ -16,6 +16,9 @@ let CanvasUtil = {
 	},
 	fillRect:function(ctx,x,y,width,height){
 		ctx.fillRect(x,y,width,height);
+	},
+	setFillColor:function(ctx,color){
+		ctx.fillStyle = color;
 	}
 }
 
@@ -34,9 +37,19 @@ CFrame.prototype.setCanvasStyle = function(style){
 CFrame.prototype.render = function(data){
 	let ctx = this.ctx;
 	let w = this.width / data.length; 
+	let y = 0,value = 0;
 	ctx.clearRect(0,0,this.width,this.height);
 	for(let i = 0; i < data.length; i++){
-		CanvasUtil.fillRect(ctx,i*w+1,this.height - data[i] - this.padding,w-1,data[i]);
+		if (data[i] > 0) {
+			y = this.height / 2 - data[i];
+			value = data[i];
+			CanvasUtil.setFillColor(ctx,'#33B6FC');
+		}else if(data[i] < 0){
+			y = this.height / 2;
+			value = -data[i];
+			CanvasUtil.setFillColor(ctx,'#EA2000');
+		}
+		CanvasUtil.fillRect(ctx,i*w+1,y,w-1,value);
 	}
 }
 

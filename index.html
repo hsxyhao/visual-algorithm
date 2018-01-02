@@ -28,9 +28,9 @@
 		for(let i = 0; i < 100; i++){
 			data[data.length] = 100;
 		}
-		cFrame.setCanvasStyle({
-			fillStyle:'#33B6FC'
-		});
+		// cFrame.setCanvasStyle({
+		// 	fillStyle:'#33B6FC'
+		// });
 		let interval = setInterval(() => {
 			if (cFrame.isRunning) {
 				data.sort((a,b)=>{
@@ -38,11 +38,9 @@
 				});
 				cFrame.render(data);
 				for(let i = 0; i < data.length; i++){
-					if (data[i] > 0) {
-						let j = Math.floor(Math.random() * data.length);
-						data[i] -= 1;
-						data[j] += 1;
-					}
+					let j = Math.floor(Math.random() * data.length);
+					data[i] -= 1;
+					data[j] += 1;
 				}
 			}
 		},1);
