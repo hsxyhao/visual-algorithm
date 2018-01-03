@@ -31,12 +31,14 @@ BubbleSort.prototype.render = function(sorted,index){
 	ctx.clearRect(0,0,this.width,this.height);
 	let w = this.lineWidth;
 	for (let i = 0; i < data.length; i++) {
-		if (i <= sorted) {
-			ctx.fillStyle = '#FFAA25';
+		if (i < sorted) {
+			ctx.fillStyle = '#E65A41';
+		} else if(i === sorted){
+			ctx.fillStyle = '#45579F';
 		} else if(i === index){
-			ctx.fillStyle = '#FF0000';
+			ctx.fillStyle = '#1192D6';
 		} else{
-			ctx.fillStyle = '#33B6FC';
+			ctx.fillStyle = '#979797';
 		}
 		ctx.fillRect(i*w+1, this.height , w - 1, -data[i]);
 	}
