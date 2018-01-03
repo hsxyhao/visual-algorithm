@@ -5,6 +5,14 @@ let DEFAULT = {
 	parent: 'body',
 	sortedColor:'red'
 }
+window.sleep = function(n) {
+    let start = new Date().getTime();
+    while(true) {
+    	if(new Date().getTime()-start > n) {
+    		break;
+    	}
+    }
+}
 
 function AsbtractSortData(config){
 	this.init(config);
@@ -43,10 +51,8 @@ AsbtractSortData.prototype.init = function(config){
 
 }
 
-AsbtractSortData.prototype.swap = function(data, num1, num2) {
-	if (data[num1] > data[num2]) {
-		let current = this.data[num1];
-		this.data[num1] = this.data[num2];
-		this.data[num2] = current;
-	}
+AsbtractSortData.prototype.swap = function(num1, num2) {
+	let current = this.data[num1];
+	this.data[num1] = this.data[num2];
+	this.data[num2] = current;
 };

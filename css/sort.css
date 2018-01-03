@@ -1,0 +1,13 @@
+.sort-box{
+	width: 500px;
+	height: 580px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+}
+.sort-box > canvas{
+	flex: 1;
+}
+.filter{
+	height: 80px;
+}

@@ -12,15 +12,15 @@ BubbleSort.prototype.sort = function(){
 	let time = 0;
 	for(let i = 0; i < data.length; i++){
 		for (let j = i; j < data.length; j++) {
-			(function(initData,i,j){
+			(function(i,j){
 				setTimeout(() => {
-					if ($this.isRunning) {
-						$this.swap(initData, i, j);
+					if (data[i] > data[j]){
+						$this.swap(i, j);
 					}
 					$this.render(i,j);
 				// 排序交换延迟
-				},time+=10);
-			})(data,i,j);
+				},time++);
+			})(i,j);
 		}
 	}
 }
@@ -31,7 +31,7 @@ BubbleSort.prototype.render = function(sorted,index){
 	ctx.clearRect(0,0,this.width,this.height);
 	let w = this.lineWidth;
 	for (let i = 0; i < data.length; i++) {
-		if (i < sorted) {
+		if (i < sorted || sorted == data.length - 1) {
 			ctx.fillStyle = '#E65A41';
 		} else if(i === sorted){
 			ctx.fillStyle = '#45579F';
