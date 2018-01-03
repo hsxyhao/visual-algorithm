@@ -43,15 +43,6 @@ AsbtractSortData.prototype.init = function(config){
 
 }
 
-AsbtractSortData.prototype.start = function(callback){
-	let interval = setInterval(() => {
-		if (this.isRunning) {
-			callback();
-		}
-	},100);
-	return interval;
-}
-
 AsbtractSortData.prototype.swap = function(data, num1, num2) {
 	if (data[num1] > data[num2]) {
 		let current = this.data[num1];

@@ -18,7 +18,8 @@ BubbleSort.prototype.sort = function(){
 						$this.swap(initData, i, j);
 					}
 					$this.render(i,j);
-				},time+=1);
+				// 排序交换延迟
+				},time+=10);
 			})(data,i,j);
 		}
 	}
