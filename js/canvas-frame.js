@@ -24,7 +24,7 @@ CFrame.prototype.start = function(callback){
 		if (this.isRunning) {
 			callback();
 		}
-	},40);
+	},1);
 	return interval;
 }
 

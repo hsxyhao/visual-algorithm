@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>蒙特卡洛方法求PI值</title>
+	<style type="text/css">
+		.canvas-box{
+			width: 500px;
+			height: 500px;
+			margin: 0 auto;
+		}
+	</style>
+	<script type="text/javascript" src="js/canvas-frame.js"></script>
+	<script type="text/javascript" src="js/monte-carlo.js"></script>
+</head>
+<body>
+	<div class="canvas-box">
+		<canvas id="canvas">当前浏览器不支持canvas</canvas>
+	</div>
+	<script type="text/javascript">
+		var monteCarlo = new MonteCarlo({
+			parent:'.canvas-box',
+			title:'蒙特卡洛方法求PI值'
+		});
+		let w = monteCarlo.width - monteCarlo.padding * 2;
+		let h = monteCarlo.height - monteCarlo.padding * 2;
+		let circle = {
+			x:monteCarlo.canvas.width / 2,
+			y:monteCarlo.canvas.height / 2,
+			r:monteCarlo.canvas.width / 2
+		},
+		points = [];
+		monteCarlo.start(()=>{
+			let x = Math.floor(Math.random() * w);
+			let y = Math.floor(Math.random() * h);
+			points[points.length] = {x:x,y:y}
+			monteCarlo.render(circle,points);
+		})
+	</script>
+</body>
+</html>

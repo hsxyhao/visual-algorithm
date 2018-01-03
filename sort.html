@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>排序算法可视化</title>
+	<script type="text/javascript" src="js/sort/sort-data.js"></script>
+	<script type="text/javascript" src="js/sort/bubble-sort.js"></script>
+	<style type="text/css">
+		.sort-box{
+			width: 500px;
+			height: 580px;
+			margin: 0 auto;
+			display: flex;
+			flex-direction: column;
+		}
+		.sort-box > canvas{
+			flex: 1;
+		}
+		.filter{
+			height: 80px;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="sort-box">
+		<canvas>当前浏览器不支持canvas</canvas>
+		<div class="filter">
+			
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		let bubble = new BubbleSort({
+			len: 100,
+			bound: 100,
+			parent: '.sort-box'
+		});
+		bubble.sort();
+	</script>
+</body>
+</html>
