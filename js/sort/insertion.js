@@ -26,14 +26,12 @@ InsertionSort.prototype.sort = function() {
 		$this.sleep(i,(out)=>{
 			$this.setPositionInfo(out, out);
 		});
-		(function(out){
-			setTimeout(()=>{
-				for(let j = out; j > 0 && arr[j] < arr[j-1]; j--){
-					$this.swap(j,j-1);
-					$this.setPositionInfo(out+1, j-1);
-				}
-			},out * 200);
-		})(i);
+		$this.sleep(i,(out)=>{
+			for(let j = out; j > 0 && arr[j] < arr[j-1]; j--){
+				$this.swap(j,j-1);
+				$this.setPositionInfo(out+1, j-1);
+			}
+		});
 	}
 	$this.sleep(arr.length,(out)=>{
 		this.setPositionInfo(out ,-1);
