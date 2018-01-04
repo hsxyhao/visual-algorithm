@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>归并排序可视化</title>
+	<script type="text/javascript" src="js/sort/sort-data.js"></script>
+	<script type="text/javascript" src="js/sort/merge.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/sort.css">
+</head>
+<body>
+	<div class="sort-box">
+		<canvas>当前浏览器不支持canvas</canvas>
+		<div class="filter"></div>
+	</div>
+	<script type="text/javascript">
+		let mergesort = new MergeSort({
+			len: 8,
+			bound: 100,
+			parent: '.sort-box'
+		});
+		mergesort.sort();
+	</script>
+</body>
+</html>

@@ -44,7 +44,7 @@ AsbtractSortData.prototype.init = function(config){
 }
 
 AsbtractSortData.prototype.swap = function(num1, num2) {
-	let current = this.data[num1];
+	let temp = this.data[num1];
 	this.data[num1] = this.data[num2];
-	this.data[num2] = current;
+	this.data[num2] = temp;
 };

@@ -1,3 +1,5 @@
+
+// 插入排序在数据元素近乎有序的情况下算法复杂度是接近O(n)的
 InsertionSort.prototype = AsbtractSortData.prototype
 
 function InsertionSort(config) {
@@ -11,6 +13,8 @@ InsertionSort.prototype.setPositionInfo = function(sorted,current){
 	this.currentIndex = current;
 	this.render();
 }
+
+// 使用setTimeout模拟线程睡眠，由于js是单线程的，所以如果使用循环模拟睡眠的话，页面会发生假死
 InsertionSort.prototype.sleep = function(index,callback){
 	(function(index){
 		setTimeout(()=>{
@@ -52,7 +56,7 @@ InsertionSort.prototype.render = function(){
 			ctx.fillStyle = '#9D9D9D';
 		} 
 		if (i == current) {
-			ctx.fillStyle = '#1192D6';
+			ctx.fillStyle = '#498EF0';
 		}
 		ctx.fillRect(i*w+1, this.height , w - 1, -data[i]);
 	}
