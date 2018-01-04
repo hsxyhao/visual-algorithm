@@ -1,8 +1,8 @@
 
 BubbleSort.prototype = AsbtractSortData.prototype
 
-function BubbleSort(len,bound){
-	this.init(len,bound);
+function BubbleSort(config){
+	this.init(config);
 	this.render();
 }
 

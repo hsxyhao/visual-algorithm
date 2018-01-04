@@ -5,14 +5,6 @@ let DEFAULT = {
 	parent: 'body',
 	sortedColor:'red'
 }
-window.sleep = function(n) {
-    let start = new Date().getTime();
-    while(true) {
-    	if(new Date().getTime()-start > n) {
-    		break;
-    	}
-    }
-}
 
 function AsbtractSortData(config){
 	this.init(config);

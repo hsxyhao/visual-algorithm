@@ -21,7 +21,7 @@ SelectionSort.prototype.sort = function(){
 		    	}
 				$this.swap(i, index);	
 				$this.render(i, index);
-			},i * 50);
+			},i * 100);
 		})(i);
     }
 }

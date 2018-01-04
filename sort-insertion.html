@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>冒泡排序可视化</title>
+	<title>插入排序可视化</title>
 	<script type="text/javascript" src="js/sort/sort-data.js"></script>
-	<script type="text/javascript" src="js/sort/bubble.js"></script>
+	<script type="text/javascript" src="js/sort/insertion.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/sort.css">
 </head>
 <body>
@@ -13,12 +13,12 @@
 		<div class="filter"></div>
 	</div>
 	<script type="text/javascript">
-		let bubble = new BubbleSort({
+		let selection = new InsertionSort({
 			len: 100,
 			bound: 100,
 			parent: '.sort-box'
 		});
-		bubble.sort();
+		selection.sort();
 	</script>
 </body>
 </html>
