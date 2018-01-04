@@ -1,45 +1,8 @@
 
 BubbleSort.prototype = AsbtractSortData.prototype
 
-
-let SortUtils = {
-	swap:function(arr,i,j){
-		let temp = arr[i];
-		arr[i] = arr[j];
-		arr[j] = temp;
-	}
-}
-
-function Step(type,indexes,times){
-	// 排序算法每一步骤的操作类型: swap、highlight
-	this.type = type;
-	// 操作步骤中最关键的索引
-	this.indexes = indexes;
-	// 操作步骤的轮数
-	this.times = times;
-}
-
-Step.prototype.StepType = {
-	SWAP:'swap',
-	HIGHTLIGHT:'highlight'
-}
-
-Step.prototype.forward = function(arr){
-	let a = this.indexes[0],
-		b = this.indexes[1];
-	if (this.type === this.StepType.SWAP) {
-		SortUtils.swap(arr, a, b);
-	}
-}
-
 function BubbleSort(config){
 	this.init(config);
-	this.steps = [];
-}
-
-BubbleSort.prototype.swap = function(arr,a,b,times){
-	SortUtils.swap(arr,a,b);
-	this.steps.push(new Step('swap',[a,b],times));
 }
 
 BubbleSort.prototype.sort = function(){
@@ -68,9 +31,9 @@ BubbleSort.prototype.draw = function(step, arr){
 	// 清除上一次步骤的记录开始重新绘画
 	ctx.clearRect(0,0,this.width,this.height);
 
-	let index1 = step.indexes[0],
-		index2 = step.indexes[1],
-		times = step.times;
+	let index1 	= step.indexes[0],
+		index2 	= step.indexes[1],
+		times 	= step.times;
 
 	for(let i = 0; i < arr.length; i++){
 		if (i > times || times === 1){
@@ -99,5 +62,4 @@ BubbleSort.prototype.render = function(arr){
 		self.draw(step,arr);
 		self.timeoutId = setTimeout(animation,100);
 	})();
-
 }
