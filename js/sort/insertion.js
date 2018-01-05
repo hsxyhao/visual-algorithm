@@ -4,15 +4,8 @@ InsertionSort.prototype = AsbtractSortData.prototype
 
 function InsertionSort(config) {
 	this.init(config);
-	this.sortedIndex = -1;
-	this.currentIndex = -1;
 }
 
-InsertionSort.prototype.setPositionInfo = function(sorted,current){
-	this.sortedIndex = sorted;
-	this.currentIndex = current;
-	this.render();
-}
 
 // 使用setTimeout模拟线程睡眠，由于js是单线程的，所以如果使用循环模拟睡眠的话，页面会发生假死
 InsertionSort.prototype.sleep = function(index,callback){
@@ -23,42 +16,40 @@ InsertionSort.prototype.sleep = function(index,callback){
 	})(index);
 }
 InsertionSort.prototype.sort = function() {
-	let arr = this.data;
-	this.setPositionInfo(0 ,-1);
-	let $this = this;
+	let arr = this.data.slice(),
+	renderArr = this.data.slice();
+	// 排序开始时的高亮渲染
+	this.highlight(0,-1);
+
 	for(let i = 0; i < arr.length; i++){
-		$this.sleep(i,(out)=>{
-			$this.setPositionInfo(out, out);
-		});
-		$this.sleep(i,(out)=>{
-			for(let j = out; j > 0 && arr[j] < arr[j-1]; j--){
-				$this.swap(j,j-1);
-				$this.setPositionInfo(out+1, j-1);
-			}
-		});
+		this.highlight(i,i);
+		for(let j = i; j > 0 && arr[j] < arr[j-1]; j--){
+			this.swap(arr,j,j-1,i+1);
+			this.highlight(i+1,j-1);
+		}
 	}
-	$this.sleep(arr.length,(out)=>{
-		this.setPositionInfo(out ,-1);
-	});
+	// 排序结束时的高亮渲染
+	this.highlight(arr.length,-1);
+	this.render(renderArr);
 };
 
-InsertionSort.prototype.render = function(){
-	let data = this.data;
+InsertionSort.prototype.draw = function(step, arr){
 	let ctx = this.ctx;
 	ctx.clearRect(0,0,this.width,this.height);
-	let w = this.lineWidth;
-	let sort = this.sortedIndex;
-	let current = this.currentIndex;
-	for(let i = 0; i < data.length; i++){
+
+	let w = this.lineWidth,
+	sort = step.other || step.indexes[0],
+	current = step.indexes[1];
+	for(let i = 0; i < arr.length; i++){
 		if (i < sort) {
 			ctx.fillStyle = '#FFAA25';
 		} else { 
-			ctx.fillStyle = '#9D9D9D';
+			ctx.fillStyle = '#979797';
 		} 
 		if (i == current) {
 			ctx.fillStyle = '#498EF0';
 		}
-		ctx.fillRect(i*w+1, this.height , w - 1, -data[i]);
+		ctx.fillRect(i*w+1, this.height , w - 1, -arr[i]);
 	}
 	ctx.fill();
 }

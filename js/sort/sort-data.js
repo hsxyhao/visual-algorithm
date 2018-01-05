@@ -11,7 +11,7 @@ function Step(type,indexes,other){
 	this.type = type;
 	// 操作步骤中最关键的索引
 	this.indexes = indexes;
-	// 操作步骤的轮数
+	// 排序其他的关键信息，每种排序显示的颜色数目、区域都有所不同，需要和indexes索引分开
 	this.other = other;
 }
 
