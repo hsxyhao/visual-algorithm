@@ -12,14 +12,15 @@ SelectionSort.prototype.sort = function(){
 	arr 		= this.data.slice(),
 	renderArr	= this.data.slice();
 	for (let i = 0; i < arr.length; i++) { 
-		let sorted = i; 
+		let min = i; 
 	    for (let j = i + 1; j < arr.length; j++) { 
-			if (arr[j] < arr[sorted]) {
-				sorted = j;
+			if (arr[j] < arr[min]) {
+				min = j;
 			}
-			self.highlight(i,j,0);
+			self.highlight(i,j,min);
     	}
-		self.swap(arr,sorted,i,0);	
+    	// 第一个min代表交换的索引；第二个min代表当前最小的索引，用于高亮显示
+		self.swap(arr,i,min,min);	
     }
 	self.render(renderArr);
 }
@@ -31,11 +32,12 @@ SelectionSort.prototype.draw = function(step, arr){
 
 	let w 			= this.lineWidth,
 	sorted 			= step.indexes[0],
-	index 			= step.indexes[1];
+	index 			= step.indexes[1],
+	min 			= step.other;
 	for (let i = 0; i < arr.length; i++) {
 		if (i < sorted || sorted == arr.length - 1) {
 			ctx.fillStyle = '#FFAA25';
-		} else if(i === index){
+		} else if(i === min){
 			ctx.fillStyle = '#7BBFF3';
 		} else if(i === index){
 			ctx.fillStyle = '#5495F1';

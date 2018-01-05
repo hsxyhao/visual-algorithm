@@ -6,13 +6,13 @@ let DEFAULT = {
 	sortedColor:'red'
 }
 
-function Step(type,indexes,times){
+function Step(type,indexes,other){
 	// 排序算法每一步骤的操作类型: swap、highlight
 	this.type = type;
 	// 操作步骤中最关键的索引
 	this.indexes = indexes;
 	// 操作步骤的轮数
-	this.times = times;
+	this.other = other;
 }
 
 Step.prototype.StepType = {

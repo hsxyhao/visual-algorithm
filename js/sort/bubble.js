@@ -34,7 +34,8 @@ BubbleSort.prototype.draw = function(step, arr){
 
 	let index1 	= step.indexes[0],
 		index2 	= step.indexes[1],
-		times 	= step.times;
+		// 代表当前循环的轮数
+		times 	= step.other;
 
 	for(let i = 0; i < arr.length; i++){
 		if (i > times || times === 1){
