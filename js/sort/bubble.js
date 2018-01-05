@@ -12,10 +12,11 @@ BubbleSort.prototype.sort = function(){
 	len 		= this.data.length;
 	for(let i = 0; i < len - 1; i++){
 		for (let j = 0; j < len - i -1; j++) {
+			let times = len - i - 1;
 			if (arr[j] > arr[j+1]){
-				this.swap(arr, j, j+1, len - i - 1);
+				this.swap(arr, j, j+1, times);
 			}else{
-				this.steps.push(new Step('highlight',[j,j+1],len - i - 1));
+				this.highlight(j,j+1, times);
 			}
 		}
 	}
@@ -49,17 +50,3 @@ BubbleSort.prototype.draw = function(step, arr){
 	ctx.fill();
 }
 
-BubbleSort.prototype.render = function(arr){
-	let self = this;
-	// 定义动画函数
-	(function animation(){
-		if (self.steps.length === 0) {
-			clearInterval(self.intervalId);
-			return;
-		}
-		let step = self.steps.shift();
-		step.forward(arr);
-		self.draw(step,arr);
-		self.timeoutId = setTimeout(animation,100);
-	})();
-}

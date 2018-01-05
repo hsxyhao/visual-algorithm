@@ -44,8 +44,9 @@ AsbtractSortData.prototype.init = function(config){
 	this.randomBound = bound;
 	let data = [];
 	for(let i = 0;i < len; i++){
-		data[data.length] = len - i;
-		// data[data.length] = Math.round(Math.random() * bound);
+		//测试备用初始化
+		// data[data.length] = len - i; 
+		data[data.length] = Math.round(Math.random() * bound);
 	}
 	this.data = data;
 
@@ -68,9 +69,28 @@ AsbtractSortData.prototype.init = function(config){
 	this.steps = [];
 }
 
-AsbtractSortData.prototype.swap = function(arr,a,b,times){
+AsbtractSortData.prototype.swap = function(arr,a,b,other){
 	SortUtils.swap(arr,a,b);
-	this.steps.push(new Step('swap',[a,b],times));
+	this.steps.push(new Step('swap',[a,b],other));
+}
+
+AsbtractSortData.prototype.highlight = function(a,b,other){
+	this.steps.push(new Step('highlight',[a,b],other));
+}
+
+AsbtractSortData.prototype.render = function(arr){
+	let self = this;
+	// 定义动画函数
+	(function animation(){
+		if (self.steps.length === 0) {
+			clearInterval(self.intervalId);
+			return;
+		}
+		let step = self.steps.shift();
+		step.forward(arr);
+		self.draw(step,arr);
+		self.timeoutId = setTimeout(animation,100);
+	})();
 }
 
 let SortUtils = {
