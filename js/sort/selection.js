@@ -13,16 +13,16 @@ SelectionSort.prototype.sort = function(){
 	for (let i = 0; i < data.length; i++) { 
 		(function(i){
 			setTimeout(() => {
-				let index = i; 
-			    for (let j = i + 1; j < data.length; j++) { 
-					if (data[j] < data[index]) {
-						index = j;
-					}
-		    	}
-				$this.swap(i, index);	
-				$this.render(i, index);
-			},i * 100);
-		})(i);
+			let index = i; 
+			for (let j = i + 1; j < data.length; j++) { 
+				if (data[j] < data[index]) {
+					index = j;
+				}
+			}
+			$this.swap(i, index);	
+			$this.render(i, index);
+		},i * 100);
+	})(i);
     }
 }
 
