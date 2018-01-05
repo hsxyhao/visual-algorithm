@@ -35,7 +35,7 @@ SelectionSort.prototype.draw = function(step, arr){
 	for (let i = 0; i < arr.length; i++) {
 		if (i < sorted || sorted == arr.length - 1) {
 			ctx.fillStyle = '#FFAA25';
-		} else if(i === sorted){
+		} else if(i === index){
 			ctx.fillStyle = '#7BBFF3';
 		} else if(i === index){
 			ctx.fillStyle = '#5495F1';
