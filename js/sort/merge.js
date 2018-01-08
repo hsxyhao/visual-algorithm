@@ -5,46 +5,81 @@ function MergeSort(config) {
 	this.init(config);
 }
 
-MergeSort.prototype.sleep = function(time,callback){
-	setTimeout(()=>{
-		callback();
-	},time);
+MergeSort.prototype.setPosition = function(l,r,m){
+    this.steps.push(new Step('highlight',[l,r,m,-1,-1],null));
+}
+
+MergeSort.prototype.mergeStep = function(l,r,k,v){
+    this.steps.push(new Step('merge',[l,r,k,v],null));
 }
 
 MergeSort.prototype.sort = function(){
-	console.log(mergeSort(this.data));
+    let arr = this.data.slice(),
+    len = arr.length,
+    renderArr = this.data.slice();
+    // 排序开始之前记录一次
+    this.setPosition(-1,-1,-1);
+	this.mergeSort(arr,0,len - 1);
+    // 排序结束之后记录一次
+    this.setPosition(0,len - 1,len - 1);
+    this.render(renderArr);
 }
 
-MergeSort.prototype.render = function(){
-	
-}
+MergeSort.prototype.draw = function(step, arr){
+    let ctx         = this.ctx;
+    ctx.fillStyle   = '#979797';
+    ctx.clearRect(0,0,this.width,this.height);
 
-function mergeSort(arr) {  //采用自上而下的递归方法
-    var len = arr.length;
-    if(len < 2) {
-        return arr;
-    }
-    let middle = Math.floor(len / 2),
-        left = arr.slice(0, middle),
-        right = arr.slice(middle);
-    return merge(mergeSort(left), mergeSort(right));
-}
-
-function merge(left, right){
-    let result = [];
-
-    while (left.length>0 && right.length>0) {
-        if (left[0] <= right[0]) {
-            result.push(left.shift());
+    let w           = this.lineWidth,
+    left            = step.indexes[0],
+    right           = step.indexes[1],
+    mergeIndex      = step.indexes[2],
+    val             = step.indexes[3];
+    for (let i = 0; i < arr.length; i++) {
+        if (i >= left && i <= right) {
+            ctx.fillStyle = '#FFAA25';
         } else {
-            result.push(right.shift());
+            ctx.fillStyle = '#979797';
         }
+        if (i >= left && i <= mergeIndex) {
+             ctx.fillStyle = '#EA2000';
+        }
+        ctx.fillRect(i*w+1, this.height , w - 1, -arr[i]);
     }
+    ctx.fill();
+}
 
-    while (left.length)
-        result.push(left.shift());
+MergeSort.prototype.mergeSort = function (arr,l,r){
+    if (l >= r) {
+        return;
+    }
+    this.setPosition(l,r,-1);
 
-    while (right.length)
-        result.push(right.shift());
-    return result;
+    let mid = Math.floor((l+r) / 2);
+    this.mergeSort(arr,l,mid);
+    this.mergeSort(arr,mid+1,r);
+    this.merge(arr,l,mid,r);
+}
+
+
+MergeSort.prototype.merge= function (arr,l,mid,r){
+    let aux = [];
+    for(let k = l; k <= r; k++){
+        aux[k-l] = arr[k];
+    }
+    let i = l,j = mid + 1;
+    for(let k = l; k <= r; k++){
+        if (i > mid) {
+            arr[k] = aux[j-l];
+            j++;
+        }else if(j > r){
+            arr[k] = aux[i-l];
+            i++;
+        }else if(aux[i - l] < aux[j - l]){
+            arr[k] = aux[i-l]; i++;
+        } else {
+            arr[k] = aux[j-l]; j++;
+        }
+        this.mergeStep(l,r,k,arr[k]);
+    }
 }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript">
+		var arr = [];
+		let len = 20;
+		function swap(arr,i,j){
+			let temp = arr[i];
+			arr[i] = arr[j];
+			arr[j] = temp;
+		}
+		for(let i = 0; i < len; i++){
+			arr[arr.length] = i;
+		}
+		for(let i = 0; i < len; i++){
+			let j = Math.floor(Math.random() * len);
+			swap(arr,i,j);
+		}
+		mergeSort(arr,20);
+
+		// 归并算法定义数组范围采用左闭右闭区间:arr[0...len]
+		function mergeSort(arr,n){
+			__mergeSort(arr,0,n-1);
+		}
+
+		function __mergeSort(arr,l,r){
+			if (l >= r) {
+				return;
+			}
+
+			let mid = Math.floor((l+r) / 2);
+			__mergeSort(arr,l,mid);
+			__mergeSort(arr,mid+1,r);
+			__merge(arr,l,mid,r);
+		}
+
+		function __merge(arr,l,mid,r){
+			let aux = [];
+			for(let k = l; k <= r; k++){
+				aux[k-l] = arr[k];
+			}
+			let i = l,j = mid + 1;
+			for(let k = l; k <= r; k++){
+				if (i > mid) {
+					arr[k] = aux[j-l];
+					j++;
+				}else if(j > r){
+					arr[k] = aux[i-l];
+					i++;
+				}else if(aux[i - l] < aux[j - l]){
+					arr[k] = aux[i-l]; i++;
+				} else {
+					arr[k] = aux[j-l]; j++;
+				}
+			}
+			console.log(arr);
+		}
+
+	</script>
+</body>
+</html>

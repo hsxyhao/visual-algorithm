@@ -17,14 +17,21 @@ function Step(type,indexes,other){
 
 Step.prototype.StepType = {
 	SWAP:'swap',
-	HIGHTLIGHT:'highlight'
+	HIGHTLIGHT:'highlight',
+	MERGE:'merge'
 }
 
 Step.prototype.forward = function(arr){
 	let a = this.indexes[0],
 		b = this.indexes[1];
 	if (this.type === this.StepType.SWAP) {
+		let a = this.indexes[0],
+			b = this.indexes[1];
 		SortUtils.swap(arr, a, b);
+	} else if (this.type === this.StepType.MERGE) {
+		let c = this.indexes[2];
+		let d = this.indexes[3];
+		SortUtils.merge(arr, c, d);
 	}
 }
 
@@ -98,5 +105,8 @@ let SortUtils = {
 		let temp = arr[i];
 		arr[i] = arr[j];
 		arr[j] = temp;
+	},
+	merge:function(arr,i,v){
+		arr[i] = v;
 	}
 }
