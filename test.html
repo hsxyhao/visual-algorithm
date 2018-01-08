@@ -6,60 +6,42 @@
 </head>
 <body>
 	<script type="text/javascript">
-		var arr = [];
-		let len = 20;
+		
+		let len = 10;
+		let arr = [];
+		for(let i = 0;i < len;i++){
+			arr[i] = Math.floor(Math.random() * 100);
+		}
+		console.log(arr);
+		quickSort(arr,0,len);
+		console.log(arr);
+
 		function swap(arr,i,j){
-			let temp = arr[i];
+			let tmp = arr[i];
 			arr[i] = arr[j];
-			arr[j] = temp;
-		}
-		for(let i = 0; i < len; i++){
-			arr[arr.length] = i;
-		}
-		for(let i = 0; i < len; i++){
-			let j = Math.floor(Math.random() * len);
-			swap(arr,i,j);
-		}
-		mergeSort(arr,20);
-
-		// 归并算法定义数组范围采用左闭右闭区间:arr[0...len]
-		function mergeSort(arr,n){
-			__mergeSort(arr,0,n-1);
+			arr[j] = tmp;
 		}
 
-		function __mergeSort(arr,l,r){
+		function partition(arr,l,r){
+			let v = arr[l],
+			j = l;
+			for(let i = l + 1;i <= r;i++){
+				if(arr[i] < v){
+					swap(arr,++j,i);
+				}
+			}
+			swap(arr,l,j);
+			return j;
+		}
+
+		function quickSort(arr,l,r) {
 			if (l >= r) {
 				return;
 			}
-
-			let mid = Math.floor((l+r) / 2);
-			__mergeSort(arr,l,mid);
-			__mergeSort(arr,mid+1,r);
-			__merge(arr,l,mid,r);
+			let p = partition(arr,l,r);
+			quickSort(arr,l,p-1);
+			quickSort(arr,p+1,r);
 		}
-
-		function __merge(arr,l,mid,r){
-			let aux = [];
-			for(let k = l; k <= r; k++){
-				aux[k-l] = arr[k];
-			}
-			let i = l,j = mid + 1;
-			for(let k = l; k <= r; k++){
-				if (i > mid) {
-					arr[k] = aux[j-l];
-					j++;
-				}else if(j > r){
-					arr[k] = aux[i-l];
-					i++;
-				}else if(aux[i - l] < aux[j - l]){
-					arr[k] = aux[i-l]; i++;
-				} else {
-					arr[k] = aux[j-l]; j++;
-				}
-			}
-			console.log(arr);
-		}
-
 	</script>
 </body>
 </html>

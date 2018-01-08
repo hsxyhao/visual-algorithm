@@ -17,15 +17,14 @@ function Step(type,indexes,other){
 Step.prototype.StepType = {
 	SWAP:'swap',
 	HIGHTLIGHT:'highlight',
-	MERGE:'merge'
+	MERGE:'merge',
+	QUICK:'quick'
 }
 
 Step.prototype.forward = function(arr){
 	let a = this.indexes[0],
 		b = this.indexes[1];
 	if (this.type === this.StepType.SWAP) {
-		let a = this.indexes[0],
-			b = this.indexes[1];
 		SortUtils.swap(arr, a, b);
 	} else if (this.type === this.StepType.MERGE) {
 		let c = this.indexes[2];
@@ -51,8 +50,13 @@ AsbtractSortData.prototype.init = function(config){
 	let data = [];
 	for(let i = 0;i < len; i++){
 		//测试备用初始化
-		// data[data.length] = len - i; 
-		data[data.length] = Math.round(Math.random() * bound);
+		data[data.length] = len - i; 
+		// data[data.length] = Math.round(Math.random() * bound);
+	}
+	for(let i = 0;i < len; i++){
+		let x = Math.floor(Math.random() * len);
+		let y = Math.floor(Math.random() * len);
+		SortUtils.swap(data,x,y);
 	}
 	this.data = data;
 
@@ -95,7 +99,7 @@ AsbtractSortData.prototype.render = function(arr){
 		let step = self.steps.shift();
 		step.forward(arr);
 		self.draw(step,arr);
-		self.timeoutId = setTimeout(animation,100);
+		self.timeoutId = setTimeout(animation,50);
 	})();
 }
 
@@ -107,5 +111,8 @@ let SortUtils = {
 	},
 	merge:function(arr,i,v){
 		arr[i] = v;
+	},
+	quick:function(arr,a,b,indexes){
+
 	}
 }

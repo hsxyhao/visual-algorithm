@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>归并排序可视化</title>
+	<title>快速排序可视化</title>
 	<script type="text/javascript" src="js/sort/sort-data.js"></script>
-	<script type="text/javascript" src="js/sort/merge.js"></script>
+	<script type="text/javascript" src="js/sort/quick.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/sort.css">
 </head>
 <body>
@@ -13,12 +13,12 @@
 		<div class="filter"></div>
 	</div>
 	<script type="text/javascript">
-		let mergesort = new MergeSort({
+		let quick = new QuickSort({
 			len: 100,
 			bound: 100,
 			parent: '.sort-box'
 		});
-		mergesort.sort();
+		quick.sort();
 	</script>
 </body>
 </html>
