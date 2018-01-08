@@ -16,7 +16,7 @@ BubbleSort.prototype.sort = function(){
 			if (arr[j] > arr[j+1]){
 				this.swap(arr, j, j+1, times);
 			}else{
-				this.highlight(j,j+1, times);
+				this.highlight([j,j+1], times);
 			}
 		}
 	}

@@ -7,29 +7,21 @@ function InsertionSort(config) {
 }
 
 
-// 使用setTimeout模拟线程睡眠，由于js是单线程的，所以如果使用循环模拟睡眠的话，页面会发生假死
-InsertionSort.prototype.sleep = function(index,callback){
-	(function(index){
-		setTimeout(()=>{
-			callback(index);
-		},index * 200);
-	})(index);
-}
 InsertionSort.prototype.sort = function() {
 	let arr = this.data.slice(),
 	renderArr = this.data.slice();
 	// 排序开始时的高亮渲染
-	this.highlight(0,-1);
+	this.highlight([0,-1]);
 
 	for(let i = 0; i < arr.length; i++){
-		this.highlight(i,i);
+		this.highlight([i,i]);
 		for(let j = i; j > 0 && arr[j] < arr[j-1]; j--){
 			this.swap(arr,j,j-1,i+1);
-			this.highlight(i+1,j-1);
+			this.highlight([i+1,j-1]);
 		}
 	}
 	// 排序结束时的高亮渲染
-	this.highlight(arr.length,-1);
+	this.highlight([arr.length,-1]);
 	this.render(renderArr);
 };
 

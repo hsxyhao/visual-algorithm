@@ -17,7 +17,7 @@ SelectionSort.prototype.sort = function(){
 			if (arr[j] < arr[min]) {
 				min = j;
 			}
-			self.highlight(i,j,min);
+			self.highlight([i,j],min);
     	}
     	// 第一个min代表交换的索引；第二个min代表当前最小的索引，用于高亮显示
 		self.swap(arr,i,min,min);	

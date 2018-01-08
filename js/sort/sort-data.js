@@ -80,8 +80,8 @@ AsbtractSortData.prototype.swap = function(arr,a,b,other){
 	this.steps.push(new Step('swap',[a,b],other));
 }
 
-AsbtractSortData.prototype.highlight = function(a,b,other){
-	this.steps.push(new Step('highlight',[a,b],other));
+AsbtractSortData.prototype.highlight = function(indexes,other){
+	this.steps.push(new Step('highlight',indexes,other));
 }
 
 AsbtractSortData.prototype.render = function(arr){
