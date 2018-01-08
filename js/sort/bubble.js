@@ -6,10 +6,10 @@ function BubbleSort(config){
 }
 
 BubbleSort.prototype.sort = function(){
-	let $this 	= this,
-	arr 		= this.data.slice(),
-	renderArr	= this.data.slice();
-	len 		= this.data.length;
+	let $this = this,
+	arr = this.data.slice(),
+	renderArr = this.data.slice();
+	len = this.data.length;
 	for(let i = 0; i < len - 1; i++){
 		for (let j = 0; j < len - i -1; j++) {
 			let times = len - i - 1;
@@ -24,18 +24,18 @@ BubbleSort.prototype.sort = function(){
 }
 BubbleSort.prototype.draw = function(step, arr){
 	// 获取关键绘画属性
-	let ctx 	= 	this.ctx,
-		w 		= 	this.lineWidth,
-		sort 	= 	this.sortedIndex,
-		current = 	this.currentIndex;
+	let ctx = this.ctx,
+		w = this.lineWidth,
+		sort = this.sortedIndex,
+		current = this.currentIndex;
 
 	// 清除上一次步骤的记录开始重新绘画
 	ctx.clearRect(0,0,this.width,this.height);
 
-	let index1 	= step.indexes[0],
-		index2 	= step.indexes[1],
+	let index1 = step.indexes[0],
+		index2 = step.indexes[1],
 		// 代表当前循环的轮数
-		times 	= step.other;
+		times = step.other;
 
 	for(let i = 0; i < arr.length; i++){
 		if (i > times || times === 1){

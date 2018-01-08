@@ -19,22 +19,23 @@ MergeSort.prototype.sort = function(){
     renderArr = this.data.slice();
     // 排序开始之前记录一次
     this.setPosition(-1,-1,-1);
-	this.mergeSort(arr,0,len - 1);
+	// this.mergeSort(arr,0,len - 1);
+    this.mergeSort2(arr);
     // 排序结束之后记录一次
     this.setPosition(0,len - 1,len - 1);
     this.render(renderArr);
 }
 
 MergeSort.prototype.draw = function(step, arr){
-    let ctx         = this.ctx;
-    ctx.fillStyle   = '#979797';
+    let ctx = this.ctx;
+    ctx.fillStyle = '#979797';
     ctx.clearRect(0,0,this.width,this.height);
 
-    let w           = this.lineWidth,
-    left            = step.indexes[0],
-    right           = step.indexes[1],
-    mergeIndex      = step.indexes[2],
-    val             = step.indexes[3];
+    let w = this.lineWidth,
+    left = step.indexes[0],
+    right = step.indexes[1],
+    mergeIndex = step.indexes[2],
+    val = step.indexes[3];
     for (let i = 0; i < arr.length; i++) {
         if (i >= left && i <= right) {
             ctx.fillStyle = '#FFAA25';
@@ -49,16 +50,26 @@ MergeSort.prototype.draw = function(step, arr){
     ctx.fill();
 }
 
+// 自上而下的归并排序算法
 MergeSort.prototype.mergeSort = function (arr,l,r){
     if (l >= r) {
         return;
     }
     this.setPosition(l,r,-1);
-
     let mid = Math.floor((l+r) / 2);
     this.mergeSort(arr,l,mid);
     this.mergeSort(arr,mid+1,r);
     this.merge(arr,l,mid,r);
+}
+
+// 自底而上的归并排序算法
+MergeSort.prototype.mergeSort2 = function(arr){
+    let len = arr.length;
+    for (let sz = 1; sz < len; sz = sz + sz) {// sz子数组大小
+        for (let low = 0; low < len - sz; low += sz + sz) {// low: 子数组索引
+            this.merge(arr, low, low + sz - 1, Math.min(low + sz + sz - 1, len - 1));
+        }
+    }
 }
 
 

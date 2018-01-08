@@ -1,4 +1,3 @@
-
 let DEFAULT = {
 	len: 10,
 	bound: 100,
