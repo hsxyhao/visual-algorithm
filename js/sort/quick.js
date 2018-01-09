@@ -2,6 +2,8 @@ QuickSort.prototype = AsbtractSortData.prototype
 
 function QuickSort(config) {
 	this.init(config);
+	// 排序最坏情况配置:如果true则表示随机获取基准，否则的话选定数组右边界为基准
+	this.worst = true;
 }
 
 QuickSort.prototype.sort = function(){
@@ -49,10 +51,7 @@ QuickSort.prototype.quick = function(arr,indexes){
 }
 
 QuickSort.prototype._quickSort = function(arr,l,r){
-	if (l > r) {
-		return;
-	}
-	if (l === r) {
+	if (l >= r) {
 		return;
 	}
 	let p = this._partition(arr,l,r);
@@ -63,6 +62,11 @@ QuickSort.prototype._quickSort = function(arr,l,r){
 QuickSort.prototype._partition = function(arr,l,r){
 	let v = arr[l],
 	j = l;
+	if (this.worst) {
+		let p = Math.floor(Math.random() * (r-l+1)) + l;
+		this.quick(arr,[p,l,l,r]);
+		v = arr[l];
+	}
 	this.highlight([l,-1,l,r]);
 	for(let i = l + 1;i <= r;i++){
 		if(arr[i] < v){

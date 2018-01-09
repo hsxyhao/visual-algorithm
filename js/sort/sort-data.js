@@ -77,6 +77,7 @@ AsbtractSortData.prototype.init = function(config){
 AsbtractSortData.prototype.initType = function(initType,len){
 	let data = [];
 	if (initType === 'random') {
+		let bound = this.randomBound;
 		for(let i = 0;i < len; i++){
 			data[data.length] = Math.round(Math.random() * bound);
 		}
@@ -117,7 +118,11 @@ AsbtractSortData.prototype.render = function(arr){
 		let step = self.steps.shift();
 		step.forward(arr);
 		self.draw(step,arr);
-		self.timeoutId = setTimeout(animation,self.deplay);
+		if (self.type === 'highlight') {
+			self.timeoutId = setTimeout(animation,self.deplay * 20);
+		} else {
+			self.timeoutId = setTimeout(animation,self.deplay);
+		}
 	})();
 }
 
