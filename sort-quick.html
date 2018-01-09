@@ -5,12 +5,83 @@
 	<title>快速排序可视化</title>
 	<script type="text/javascript" src="js/sort/sort-data.js"></script>
 	<script type="text/javascript" src="js/sort/quick.js"></script>
+	<script type="text/javascript" src="js/filter-component.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/sort.css">
 </head>
 <body>
 	<div class="sort-box">
+		<div class="filter">
+			<h4>排序算法可视化</h4>
+			<div class="filter-content">
+				<div class="filter-cloumn">
+					<div class="cloumn-title bg-blue">排序数据类型</div>
+					<div>
+						<ul>
+							<li>
+								<span class="radio" data-group="dataType" data-color="blue">
+									<span></span>
+								</span>Identical
+							</li>
+							<li>
+								<span class="radio" data-group="dataType" data-color="blue">
+									<span></span>
+								</span>NearlySorted
+							</li>
+							<li>
+								<span class="radio" data-group="dataType" data-color="blue">
+									<span></span>
+								</span>Sorted
+							</li>
+							<li>
+								<span class="radio" data-group="dataType" data-color="blue">
+									<span></span>
+								</span>Random
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="filter-cloumn">
+					<div class="cloumn-title bg-light-blue">快速排序类型</div>
+					<div>
+						<ul>
+							<li>
+								<span class="radio" data-group="sortType" data-color="lightBlue">
+									<span></span>
+								</span>单路排序
+							</li>
+							<li>
+								<span class="radio" data-group="sortType" data-color="lightBlue">
+									<span></span>
+								</span>双路排序
+							</li>
+							<li>
+								<span class="radio" data-group="sortType" data-color="lightBlue">
+									<span></span>
+								</span>三路排序
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="filter-cloumn">
+					<div class="cloumn-title bg-yellow">考虑最坏情况</div>
+					<div>
+						<ul>
+							<li>
+								<span class="radio" data-group="worst" data-color="yellow">
+									<span></span>
+								</span>是
+							</li>
+							<li>
+								<span class="radio" data-group="worst" data-color="yellow">
+									<span></span>
+								</span>否
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
 		<canvas>当前浏览器不支持canvas</canvas>
-		<div class="filter"></div>
 	</div>
 	<script type="text/javascript">
 		let quick = new QuickSort({
@@ -18,7 +89,7 @@
 			bound: 100,
 			parent: '.sort-box',
 			deplay: 50,
-			initType:'identical'
+			initType:'random'
 		});
 		quick.sort();
 	</script>

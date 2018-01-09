@@ -64,7 +64,6 @@ QuickSort.prototype._partition = function(arr,l,r){
 	j = l;
 	if (this.worst) {
 		let p = Math.floor(Math.random() * (r-l)) + l;
-		console.log(p);
 		this.quick(arr,[p,l,l,r]);
 		v = arr[l];
 	}
