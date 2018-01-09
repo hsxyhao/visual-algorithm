@@ -25,18 +25,18 @@ QuickSort.prototype.draw = function(step,arr){
 	r = step.indexes[3];
 	ctx.fillStyle = '#999999';
 	for (let i = 0; i < arr.length; i++) {
-		if (i > l && i < a){
-			ctx.fillStyle = '#C6C6C6';
-		} else if(i > a && i < r) {
-			ctx.fillStyle = '#999999';
-		} else if (i === l) {
+		if (i === l) {
 			// 蓝色
 			ctx.fillStyle = '#445D95';
 		} else if (i === b) {
 			ctx.fillStyle = '#139CE6';
 		} else if (i === r) {
 			ctx.fillStyle = '#F5653B';
-		}else {
+		}else if (i > l && i < a){
+			ctx.fillStyle = '#C6C6C6';
+		} else if(i > a && i < r) {
+			ctx.fillStyle = '#999999';
+		} else {
 			ctx.fillStyle = '#999999';
 		}
 		ctx.fillRect(i*w+1, this.height , w - 1, -arr[i]);
@@ -63,7 +63,8 @@ QuickSort.prototype._partition = function(arr,l,r){
 	let v = arr[l],
 	j = l;
 	if (this.worst) {
-		let p = Math.floor(Math.random() * (r-l+1)) + l;
+		let p = Math.floor(Math.random() * (r-l)) + l;
+		console.log(p);
 		this.quick(arr,[p,l,l,r]);
 		v = arr[l];
 	}

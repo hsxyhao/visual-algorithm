@@ -85,6 +85,12 @@ AsbtractSortData.prototype.initType = function(initType,len){
 		for(let i = 0;i < len; i++){
 			data[data.length] = len - i; 
 		}
+	} else if (initType === 'identical') {
+		// 数据里面的值全部相同
+		let val = len / 2;
+		for (let i = 0;i < len; i++) {
+			data[data.length] = val;
+		}
 	}
 	
 	if (initType === 'nearlySorted') {
