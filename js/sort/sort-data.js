@@ -3,7 +3,8 @@ let DEFAULT = {
 	bound: 100,
 	parent: 'body',
 	sortedColor:'red',
-	deplay:300
+	deplay:300,
+	initType:'random'
 }
 
 function Step(type,indexes,other){
@@ -44,23 +45,14 @@ AsbtractSortData.prototype.init = function(config){
 	let len = config.len || DEFAULT.len;
 	let bound = config.bound || DEFAULT.bound;
 	let parent = config.parent || DEFAULT.parent;
+	let initType = config.initType || DEFAULT.initType;
 	this.deplay = config.deplay || DEFAULT.deplay;
 	this.sortedColor = config.sortedColor || DEFAULT.sortedColor;
 
 	this.length = len;
 	this.randomBound = bound;
-	let data = [];
-	for(let i = 0;i < len; i++){
-		//测试备用初始化
-		data[data.length] = len - i; 
-		// data[data.length] = Math.round(Math.random() * bound);
-	}
-	for(let i = 0;i < len; i++){
-		let x = Math.floor(Math.random() * len);
-		let y = Math.floor(Math.random() * len);
-		SortUtils.swap(data,x,y);
-	}
-	this.data = data;
+	
+	this.initType(initType,len);
 
 	let parentDom = document.querySelector(parent);
 	let canvas = parentDom.querySelector('canvas');
@@ -79,6 +71,30 @@ AsbtractSortData.prototype.init = function(config){
 
 	// 排序操作步骤记录数组
 	this.steps = [];
+}
+
+
+AsbtractSortData.prototype.initType = function(initType,len){
+	let data = [];
+	if (initType === 'random') {
+		for(let i = 0;i < len; i++){
+			data[data.length] = Math.round(Math.random() * bound);
+		}
+	} else if(initType === 'sorted' || initType === 'nearlySorted') {
+		for(let i = 0;i < len; i++){
+			data[data.length] = len - i; 
+		}
+	}
+	
+	if (initType === 'nearlySorted') {
+		let N = len * 0.02;
+		for(let i = 0;i < N; i++){
+			let x = Math.floor(Math.random() * len);
+			let y = Math.floor(Math.random() * len);
+			SortUtils.swap(data,x,y);
+		}
+	}
+	this.data = data;
 }
 
 AsbtractSortData.prototype.swap = function(arr,a,b,other){
