@@ -9,6 +9,12 @@ function QuickSort(config) {
 QuickSort.prototype.sort = function(){
 	let arr = this.data.slice(),
 	renderArr = this.data.slice();
+
+	// 选择默认的排序类型
+	if (!this._partition) {
+		this._partition = this.oneWay
+	}
+
 	this.highlight([-1,-1,0,-1]);
 	this._quickSort(arr,0,arr.length);
 	this.highlight([-1,-1,-1,arr.length]);
@@ -59,7 +65,7 @@ QuickSort.prototype._quickSort = function(arr,l,r){
 	this._quickSort(arr,p+1,r);
 }
 
-QuickSort.prototype._partition = function(arr,l,r){
+QuickSort.prototype.oneWay = function(arr,l,r){
 	let v = arr[l],
 	j = l;
 	if (this.worst) {

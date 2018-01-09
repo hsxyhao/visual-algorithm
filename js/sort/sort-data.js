@@ -40,7 +40,8 @@ function AsbtractSortData(config){
 }
 
 AsbtractSortData.prototype.init = function(config){
-
+	// 缓存初始化配置
+	this.config = config;
 	let con = config || DEFAULT;
 	let len = config.len || DEFAULT.len;
 	let bound = config.bound || DEFAULT.bound;
@@ -102,6 +103,12 @@ AsbtractSortData.prototype.initType = function(initType,len){
 		}
 	}
 	this.data = data;
+}
+
+AsbtractSortData.prototype.restart = function(){
+	this.init(this.config);
+	clearTimeout(this.timeoutId);
+	this.sort();
 }
 
 AsbtractSortData.prototype.swap = function(arr,a,b,other){
