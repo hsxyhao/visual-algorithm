@@ -2,7 +2,8 @@ let DEFAULT = {
 	len: 10,
 	bound: 100,
 	parent: 'body',
-	sortedColor:'red'
+	sortedColor:'red',
+	deplay:300
 }
 
 function Step(type,indexes,other){
@@ -43,6 +44,7 @@ AsbtractSortData.prototype.init = function(config){
 	let len = config.len || DEFAULT.len;
 	let bound = config.bound || DEFAULT.bound;
 	let parent = config.parent || DEFAULT.parent;
+	this.deplay = config.deplay || DEFAULT.deplay;
 	this.sortedColor = config.sortedColor || DEFAULT.sortedColor;
 
 	this.length = len;
@@ -99,7 +101,7 @@ AsbtractSortData.prototype.render = function(arr){
 		let step = self.steps.shift();
 		step.forward(arr);
 		self.draw(step,arr);
-		self.timeoutId = setTimeout(animation,50);
+		self.timeoutId = setTimeout(animation,self.deplay);
 	})();
 }
 

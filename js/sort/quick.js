@@ -7,8 +7,9 @@ function QuickSort(config) {
 QuickSort.prototype.sort = function(){
 	let arr = this.data.slice(),
 	renderArr = this.data.slice();
+	this.highlight([-1,-1,0,arr.length-1]);
 	this._quickSort(arr,0,arr.length);
-	this.highlight([-1,-1,0,arr.length]);
+	this.highlight([-1,-1,-1,arr.length]);
 	this.render(renderArr);
 }
 
@@ -22,7 +23,10 @@ QuickSort.prototype.draw = function(step,arr){
 	r = step.indexes[3];
 	ctx.fillStyle = '#999999';
 	for (let i = 0; i < arr.length; i++) {
-		if (i === a) {
+		if (i > l && i < r) {
+			ctx.fillStyle = '#4A8F53';
+		} else if (i === l) {
+			// 蓝色
 			ctx.fillStyle = '#445D95';
 		} else if (i === b) {
 			ctx.fillStyle = '#139CE6';
@@ -57,6 +61,7 @@ QuickSort.prototype._quickSort = function(arr,l,r){
 QuickSort.prototype._partition = function(arr,l,r){
 	let v = arr[l],
 	j = l;
+	this.highlight([l,-1,l,r]);
 	for(let i = l + 1;i <= r;i++){
 		if(arr[i] < v){
 			this.quick(arr,[j+1,i,l,r]);

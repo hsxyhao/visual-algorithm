@@ -3,45 +3,29 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<style type="text/css">
+		.outer,.icon{
+			width: 20px;
+			height: 20px;
+		}
+		.icon{
+			background-color: red;
+		}
+		.active:hover {
+			transition: all 0.4s linear;
+			transform: translateX(24px);
+		}
+		.active:hover > .icon{
+			transition: all 0.4s linear;
+			transform: rotate(180deg);
+		}
+	</style>
 </head>
 <body>
-	<script type="text/javascript">
-		
-		let len = 10;
-		let arr = [];
-		for(let i = 0;i < len;i++){
-			arr[i] = Math.floor(Math.random() * 100);
-		}
-		console.log(arr);
-		quickSort(arr,0,len);
-		console.log(arr);
-
-		function swap(arr,i,j){
-			let tmp = arr[i];
-			arr[i] = arr[j];
-			arr[j] = tmp;
-		}
-
-		function partition(arr,l,r){
-			let v = arr[l],
-			j = l;
-			for(let i = l + 1;i <= r;i++){
-				if(arr[i] < v){
-					swap(arr,++j,i);
-				}
-			}
-			swap(arr,l,j);
-			return j;
-		}
-
-		function quickSort(arr,l,r) {
-			if (l >= r) {
-				return;
-			}
-			let p = partition(arr,l,r);
-			quickSort(arr,l,p-1);
-			quickSort(arr,p+1,r);
-		}
-	</script>
+	<div class="active">
+		<div class="outer active">
+			<div class="icon"></div>
+		</div>
+	</div>
 </body>
 </html>
