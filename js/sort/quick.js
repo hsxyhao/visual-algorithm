@@ -4,50 +4,100 @@ function QuickSort(config) {
 	this.init(config);
 	// 排序最坏情况配置:如果true则表示随机获取基准，否则的话选定数组右边界为基准
 	this.worst = true;
+
+	this.sortType = 'two';
 }
 
 QuickSort.prototype.sort = function(){
 	let arr = this.data.slice(),
-	renderArr = this.data.slice();
+	renderArr = this.data.slice(),
+	len = arr.length;
 
 	// 选择默认的排序类型
-	if (!this._partition) {
-		this._partition = this.oneWay
+	if (!this.sortType || this.sortType === 'default' || this.sortType === 'one') {
+		this._partition = this.oneWay;
+		this._paint = this.oneDraw;
+	} else if(this.sortType === 'two'){
+		len--;
+		this._partition = this.twoWays;
+		this._paint = this.twoDraw;
 	}
-
-	this.highlight([-1,-1,0,-1]);
-	this._quickSort(arr,0,arr.length);
-	this.highlight([-1,-1,-1,arr.length]);
+	this.highlight([-1,-1,-1,-1,-1]);
+	this._quickSort(arr,0,len);
+	this.highlight([-1,-1,-1,-1,-1]);
 	this.render(renderArr);
 }
 
-QuickSort.prototype.draw = function(step,arr){
+QuickSort.prototype.oneDraw = function(step,arr){
 	let ctx = this.ctx;
 	ctx.clearRect(0,0,this.width,this.height);
+	ctx.fillStyle = '#999999';
 	let w = this.lineWidth,
 	a = step.indexes[0],
 	b = step.indexes[1],
 	l = step.indexes[2],
 	r = step.indexes[3];
-	ctx.fillStyle = '#999999';
 	for (let i = 0; i < arr.length; i++) {
-		if (i === l) {
-			// 蓝色
-			ctx.fillStyle = '#445D95';
-		} else if (i === b) {
-			ctx.fillStyle = '#139CE6';
-		} else if (i === r) {
-			ctx.fillStyle = '#F5653B';
-		}else if (i > l && i < a){
-			ctx.fillStyle = '#C6C6C6';
-		} else if(i > a && i < r) {
-			ctx.fillStyle = '#999999';
+		if (i > l && i < r){
+			ctx.fillStyle = '#52995A';
 		} else {
 			ctx.fillStyle = '#999999';
+		}
+		if (i === l) {
+			// 基准
+			ctx.fillStyle = '#445D95';
+		} 
+		if (i === b) {
+			// 排序游标
+			ctx.fillStyle = '#139CE6';
+		} 
+		if (i === r) {
+			// 数组右边界
+			ctx.fillStyle = '#F5653B';
 		}
 		ctx.fillRect(i*w+1, this.height , w - 1, -arr[i]);
 	}
 	ctx.fill();
+}
+
+QuickSort.prototype.twoDraw = function(step,arr){
+	let ctx = this.ctx;
+	ctx.clearRect(0,0,this.width,this.height);
+	ctx.fillStyle = '#999999';
+	let w = this.lineWidth,
+	a = step.indexes[0],
+	b = step.indexes[1],
+	l = step.indexes[2],
+	r = step.indexes[3],
+	c = step.indexes[4];
+	for (let i = 0; i < arr.length; i++) {
+		if (i > l && i < r){
+			ctx.fillStyle = '#52995A';
+		} else {
+			ctx.fillStyle = '#999999';
+		}
+		if (i === l) {
+			// 基准
+			ctx.fillStyle = '#445D95';
+		}else if (i > l && i <= c) {
+			// 排序游标
+			ctx.fillStyle = '#139CE6';
+		}
+		if (i >= b && i <= r) {
+			// 排序游标
+			ctx.fillStyle = '#139CE6';
+		} 
+		if (i === r) {
+			// 数组右边界
+			ctx.fillStyle = '#F5653B';
+		}
+		ctx.fillRect(i*w+1, this.height , w-1, -arr[i]);
+	}
+	ctx.fill();
+}
+
+QuickSort.prototype.draw = function(step,arr){
+	this._paint(step,arr);
 }
 
 QuickSort.prototype.quick = function(arr,indexes){
@@ -65,9 +115,40 @@ QuickSort.prototype._quickSort = function(arr,l,r){
 	this._quickSort(arr,p+1,r);
 }
 
+QuickSort.prototype.twoWays = function(arr,l,r){
+	let v = arr[l],
+	i = l+1, 
+	j = r;
+	// 使用随机方式决定快速排序基准
+	if (this.worst) {
+		let p = Math.floor(Math.random() * (r-l)) + l;
+		this.quick(arr,[p,l,l,r]);
+		v = arr[l];
+	}
+	while(true) {
+		while(i<=r && arr[i] < v) {
+			i++;
+			this.highlight([i,j,l,r,i]);
+		}
+		while(j>=l+1&&arr[j] > v) {
+			j--;
+			this.highlight([i,j,l,r,i]);
+		}
+		if(i > j){
+			break;
+		}
+		this.quick(arr,[i,j,l,r,i]);
+		i++;
+		j--;
+	}
+	this.quick(arr,[l,j,l,r,i]);
+	return j;
+}
+
 QuickSort.prototype.oneWay = function(arr,l,r){
 	let v = arr[l],
 	j = l;
+	// 使用随机方式决定快速排序基准
 	if (this.worst) {
 		let p = Math.floor(Math.random() * (r-l)) + l;
 		this.quick(arr,[p,l,l,r]);
