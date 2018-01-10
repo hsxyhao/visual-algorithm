@@ -46,7 +46,6 @@ BubbleSort.prototype.draw = function(step, arr){
 			ctx.fillStyle = '#979797';
 		}
 		ctx.fillRect(i*w+1, this.height , w - 1, -arr[i]);
-		console.log();
 	}
 	ctx.fill();
 }

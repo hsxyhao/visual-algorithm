@@ -110,8 +110,6 @@ QuickSort.prototype.threeDraw = function(step,arr){
 	ctx.clearRect(0,0,this.width,this.height);
 	ctx.fillStyle = '#999999';
 	let w = this.lineWidth,
-	a = step.indexes[0],
-	b = step.indexes[1],
 	l = step.indexes[2],
 	r = step.indexes[3],
 	c = step.indexes[4],

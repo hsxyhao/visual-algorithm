@@ -9,13 +9,14 @@
 </head>
 <body>
 	<div class="sort-box">
-		<canvas>当前浏览器不支持canvas</canvas>
 		<div class="filter"></div>
+		<canvas>当前浏览器不支持canvas</canvas>
 	</div>
 	<script type="text/javascript">
 		let bubble = new BubbleSort({
-			len: 20,
+			len: 100,
 			bound: 100,
+			deplay:20,
 			parent: '.sort-box'
 		});
 		bubble.sort();

@@ -3,7 +3,7 @@ let DEFAULT = {
 	bound: 100,
 	parent: 'body',
 	sortedColor:'red',
-	deplay:300,
+	deplay:30,
 	initType:'random'
 }
 
@@ -24,6 +24,9 @@ Step.prototype.StepType = {
 }
 
 Step.prototype.forward = function(arr){
+	if (this.type === this.StepType.HIGHTLIGHT) {
+		return;
+	}
 	let a = this.indexes[0],
 		b = this.indexes[1];
 	if (this.type === this.StepType.SWAP) {
@@ -147,8 +150,5 @@ let SortUtils = {
 	},
 	merge:function(arr,i,v){
 		arr[i] = v;
-	},
-	quick:function(arr,a,b,indexes){
-
 	}
 }

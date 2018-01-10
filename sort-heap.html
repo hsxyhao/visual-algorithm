@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>插入排序可视化</title>
+	<title>堆排序可视化</title>
 	<script type="text/javascript" src="js/sort/sort-data.js"></script>
-	<script type="text/javascript" src="js/sort/insertion.js"></script>
+	<script type="text/javascript" src="js/sort/heap.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/sort.css">
 </head>
 <body>
@@ -13,12 +13,13 @@
 		<canvas>当前浏览器不支持canvas</canvas>
 	</div>
 	<script type="text/javascript">
-		let selection = new InsertionSort({
+		let heap = new HeapSort({
 			len: 100,
 			bound: 100,
-			parent: '.sort-box'
+			parent: '.sort-box',
+			initType:'sorted'
 		});
-		selection.sort();
+		heap.sort();
 	</script>
 </body>
 </html>
