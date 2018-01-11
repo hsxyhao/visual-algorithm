@@ -3,8 +3,26 @@
 <head>
 	<meta charset="UTF-8">
 	<title>迷宫</title>
+	<link rel="stylesheet" type="text/css" href="css/maze.css">
+	<script type="text/javascript" src="js/maze/maze.js"></script>
 </head>
 <body>
-	
+	<div class="box">
+		<div class="maze">
+			<canvas id="mazeCanvas">浏览器不支持canvas</canvas>
+		</div>
+		<div class="action">
+			<input id="fileSelector" type="file" name="file" value="导入迷宫数据">
+			<div class="btn-create">生成迷宫</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var maze = new Maze('fileSelector');
+		let btnCreate = document.querySelector('.btn-create');
+		let canvas = document.querySelector('#mazeCanvas');
+		btnCreate.onclick = () => {
+			maze.createMazeMap(canvas);
+		}
+	</script>
 </body>
 </html>
