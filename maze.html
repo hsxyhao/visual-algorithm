@@ -13,15 +13,20 @@
 		</div>
 		<div class="action">
 			<input id="fileSelector" type="file" name="file" value="导入迷宫数据">
-			<div class="btn-create">生成迷宫</div>
+			<div class="btn create">生成迷宫</div>
+			<div class="btn solve">求解迷宫</div>
 		</div>
 	</div>
 	<script type="text/javascript">
 		var maze = new Maze('fileSelector');
-		let btnCreate = document.querySelector('.btn-create');
+		let btnCreate = document.querySelector('.create');
+		let btnSolve = document.querySelector('.solve');
 		let canvas = document.querySelector('#mazeCanvas');
 		btnCreate.onclick = () => {
 			maze.createMazeMap(canvas);
+		}
+		btnSolve.onclick = () => {
+			maze.solveMaze(canvas,maze.mazeArr);
 		}
 	</script>
 </body>
