@@ -60,8 +60,8 @@ Maze.prototype.parse2Array = function() {
 	// 添加对象属性
 	this.n = n;
 	this.m = m;
-	this.enterPos = {X:0,Y:1};
-	this.existPos = {X:n - 1,Y:m - 2};
+	this.enterPos = {X:1,Y:0};
+	this.existPos = {X:n - 2,Y:m-1};
 	this.mazeArr = mazeArr;
 	this.vistited = vistited;
 	this.path = path;
@@ -93,10 +93,11 @@ Maze.prototype.move = function(x,y){
 	}
 	let self = this;
 	this.vistited[x][y] = true;
-	this.steps.push(new Step(x,y));
+	this.steps.push(new Step(x,y,true));
 	// 判断当前坐标是不是迷宫出口
 	if (x === this.existPos.X && y === this.existPos.Y) {
-		return;
+		console.log('找到出口');
+		return true;
 	}
 
 	for (let i = 0; i < 4; i++) {
@@ -105,9 +106,13 @@ Maze.prototype.move = function(x,y){
 		if (this.stepInMaze(nextX,nextY) 
 			&& this.getMaze(nextX,nextY) === this.road
 			&& !this.vistited[nextX][nextY]) {
-			this.move(nextX,nextY);
+			if(this.move(nextX,nextY)){
+				return true;
+			};
 		}
 	}
+	this.steps.push(new Step(x,y,false));
+	return false;
 }
 
 Maze.prototype.stepInMaze = function(x,y){
@@ -128,7 +133,7 @@ Maze.prototype.render = function(){
 		let step = self.steps.shift();
 		step.forward(path);
 		self.drawMap(path);
-		self.timeoutId = setTimeout(animation,10);
+		self.timeoutId = setTimeout(animation,4);
 	})();
 }
 
@@ -176,12 +181,17 @@ Maze.prototype.drawMap = function(path){
 	}
 }
 
-
-function Step(x,y){
+/**
+ * [Step 迷宫探索步骤对象]
+ * @param {[integer]} x [迷宫x坐标]
+ * @param {[integer]} y [迷宫y坐标]
+ */
+function Step(x,y,value){
 	this.x = x;
 	this.y = y;
+	this.v = value;
 }
 
 Step.prototype.forward = function(path){
-	path[this.x][this.y] = true;
+	path[this.x][this.y] = this.v;
 }
