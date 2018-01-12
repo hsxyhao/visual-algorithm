@@ -81,17 +81,44 @@ Maze.prototype.solveMaze = function(){
 		console.warn('The map is not ready yet');
 		return;
 	}
-	this.move(this.enterPos.X,this.enterPos.Y);
+	this.recursiveMove(this.enterPos.X,this.enterPos.Y);
 	this.render();
 }
 
-Maze.prototype.move = function(x,y){
+/**
+ * [stackMove 使用非递归(栈结构)解迷宫]
+ * @param  {[type]} x [进入x坐标]
+ * @param  {[type]} y [进入y坐标]
+ * @return {[type]}   [description]
+ */
+Maze.prototype.stackMove = function(x,y){
+	let stack = [];
+	stack.push({x:x,y:y});
+	this.vistited[x][y] = true;
+
+}
+
+/**
+ * [recursiveMove 递归法解决迷宫问题]
+ * @param  {[type]} x [进入x坐标]
+ * @param  {[type]} y [进入y坐标]
+ * @return {[type]}   [description]
+ */
+Maze.prototype.recursiveMove = function(x,y){
+	let self = this;
+	return self.stepMove(x,y,(nextX,nextY)=>{
+		if(self.recursiveMove(nextX,nextY)){
+			return true;
+		};
+	});
+}
+Maze.prototype.stepMove = function(x,y,callback){
 	// 判断当前的坐标在不在迷宫地图中
 	if (!this.stepInMaze(x,y)) {
 		console.error('The current step is not a valid position');
 		return;
 	}
-	let self = this;
+	// 标志该位置已经被访问
 	this.vistited[x][y] = true;
 	this.steps.push(new Step(x,y,true));
 	// 判断当前坐标是不是迷宫出口
@@ -106,7 +133,7 @@ Maze.prototype.move = function(x,y){
 		if (this.stepInMaze(nextX,nextY) 
 			&& this.getMaze(nextX,nextY) === this.road
 			&& !this.vistited[nextX][nextY]) {
-			if(this.move(nextX,nextY)){
+			if(callback && callback(nextX,nextY)){
 				return true;
 			};
 		}
@@ -157,6 +184,11 @@ Maze.prototype.createMazeMap = function(canvas){
 	this.ready = true;
 }
 
+/**
+ * [drawMap 绘制地图]
+ * @param  {[Array]} path [路径数组]
+ * @return {[type]}      [description]
+ */
 Maze.prototype.drawMap = function(path){
 	let ctx = this.ctx,
 	n = this.n,
