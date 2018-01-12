@@ -5,6 +5,7 @@
 	<title>迷宫</title>
 	<link rel="stylesheet" type="text/css" href="css/maze.css">
 	<script type="text/javascript" src="js/maze/maze.js"></script>
+	<script type="text/javascript" src="js/maze/maze-map.js"></script>
 </head>
 <body>
 	<div class="box">
@@ -12,18 +13,24 @@
 			<canvas id="mazeCanvas">浏览器不支持canvas</canvas>
 		</div>
 		<div class="action">
-			<input id="fileSelector" type="file" name="file" value="导入迷宫数据">
-			<div class="btn create">生成迷宫</div>
+			<input id="fileSelector" style="width:200px" type="file" name="file" value="导入迷宫数据">
+			<div class="btn create">生成方式1</div>
+			<div class="btn create2">生成方式2</div>
 			<div class="btn solve">求解迷宫</div>
 		</div>
 	</div>
 	<script type="text/javascript">
 		var maze = new Maze('fileSelector');
+		var mazeMap = new MazeMap(101,101);
 		let btnCreate = document.querySelector('.create');
+		let btnCreate2 = document.querySelector('.create2');
 		let btnSolve = document.querySelector('.solve');
 		let canvas = document.querySelector('#mazeCanvas');
 		btnCreate.onclick = () => {
 			maze.createMazeMap(canvas);
+		}
+		btnCreate2.onclick = () => {
+			mazeMap.draw(canvas);
 		}
 		btnSolve.onclick = () => {
 			maze.solveMaze(canvas,maze.mazeArr);

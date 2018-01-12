@@ -1,4 +1,3 @@
-
 /**
  * 迷宫数据对象
  * @param {[string]} fileInputClassName [文件选择元素id名]
