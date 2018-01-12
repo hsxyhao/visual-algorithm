@@ -40,7 +40,8 @@ Maze.prototype.parse2Array = function() {
 
 	// 用于记录是否走过
 	let vistited = [],
-	path = [];
+	path = [],
+	result = [];
 	if (!n || !m) {
 		console.warn('error: this is not a correct maze file');
 		return; 
@@ -56,6 +57,7 @@ Maze.prototype.parse2Array = function() {
 		}
 		vistited[i-1] = visiteItem;
 		path[i-1] = visiteItem.slice();
+		result[i-1] = visiteItem.slice();
 	}
 	// 添加对象属性
 	this.n = n;
@@ -64,6 +66,7 @@ Maze.prototype.parse2Array = function() {
 	this.existPos = {X:n - 2,Y:m-1};
 	this.mazeArr = mazeArr;
 	this.vistited = vistited;
+	this.result = result;
 	this.path = path;
 	this.parse = true;
 };
@@ -81,8 +84,40 @@ Maze.prototype.solveMaze = function(){
 		console.warn('The map is not ready yet');
 		return;
 	}
-	this.recursiveMove(this.enterPos.X,this.enterPos.Y);
+	this.heapMove(this.enterPos.X,this.enterPos.Y);
 	this.render();
+}
+
+Maze.prototype.heapMove = function(x,y){
+	let heap = [],
+	isSolved = false;
+	heap.push({x:x,y:y,prev:null});
+	this.vistited[x][y] = true;
+	while(heap.length > 0) {
+		let pos = heap.shift();
+		let x = pos.x,
+		y = pos.y;
+		this.steps.push(new Step(x,y,true));
+		// 判断当前坐标是不是迷宫出口
+		if (x === this.existPos.X && y === this.existPos.Y) {
+			this.findPath(pos);
+			isSolved = true;
+			return true;
+		}
+		for (let i = 0; i < 4; i++) {
+			let nextX = x + this.drection[i][0],
+			nextY = y + this.drection[i][1];
+			if (this.stepInMaze(nextX,nextY) 
+				&& this.getMaze(nextX,nextY) === this.road
+				&& !this.vistited[nextX][nextY]) {
+				heap.push({x:nextX,y:nextY,prev:{x:x,y:y}});
+				this.vistited[nextX][nextY] = true;
+			}
+		}
+	}
+	if (!isSolved) {
+		console.warn('The maze has no solution');
+	}
 }
 
 /**
@@ -92,10 +127,43 @@ Maze.prototype.solveMaze = function(){
  * @return {[type]}   [description]
  */
 Maze.prototype.stackMove = function(x,y){
-	let stack = [];
-	stack.push({x:x,y:y});
+	let stack = [],
+	isSolved = false;
+	stack.push({x:x,y:y,prev:null});
 	this.vistited[x][y] = true;
+	while(stack.length > 0) {
+		let pos = stack.pop();
+		let x = pos.x,
+		y = pos.y;
+		this.steps.push(new Step(x,y,true));
+		// 判断当前坐标是不是迷宫出口
+		if (x === this.existPos.X && y === this.existPos.Y) {
+			this.findPath(pos);
+			isSolved = true;
+			return true;
+		}
+		for (let i = 0; i < 4; i++) {
+			let nextX = x + this.drection[i][0],
+			nextY = y + this.drection[i][1];
+			if (this.stepInMaze(nextX,nextY) 
+				&& this.getMaze(nextX,nextY) === this.road
+				&& !this.vistited[nextX][nextY]) {
+				stack.push({x:nextX,y:nextY,prev:{x:x,y:y}});
+				this.vistited[nextX][nextY] = true;
+			}
+		}
+	}
+	if (!isSolved) {
+		console.warn('The maze has no solution');
+	}
+}
 
+Maze.prototype.findPath = function(pos){
+	let cur = pos.prev;
+	while (cur!=null) {
+		this.result[cur.x][cur.y] = true;
+		cur = cur.prev;
+	}
 }
 
 /**
@@ -106,13 +174,13 @@ Maze.prototype.stackMove = function(x,y){
  */
 Maze.prototype.recursiveMove = function(x,y){
 	let self = this;
-	return self.stepMove(x,y,(nextX,nextY)=>{
+	return self.stepForward(x,y,(nextX,nextY)=>{
 		if(self.recursiveMove(nextX,nextY)){
 			return true;
 		};
 	});
 }
-Maze.prototype.stepMove = function(x,y,callback){
+Maze.prototype.stepForward = function(x,y,callback){
 	// 判断当前的坐标在不在迷宫地图中
 	if (!this.stepInMaze(x,y)) {
 		console.error('The current step is not a valid position');
@@ -123,7 +191,6 @@ Maze.prototype.stepMove = function(x,y,callback){
 	this.steps.push(new Step(x,y,true));
 	// 判断当前坐标是不是迷宫出口
 	if (x === this.existPos.X && y === this.existPos.Y) {
-		console.log('找到出口');
 		return true;
 	}
 
@@ -202,10 +269,13 @@ Maze.prototype.drawMap = function(path){
 			if (mazeArr[i][j] === wall) {
 				ctx.fillStyle = '#009EF3'
 			} else {
-				ctx.fillStyle = '#fff'
+				ctx.fillStyle = '#fff';
 			}
 			if (path[i][j]) {
-				ctx.fillStyle = '#EEE448'
+				ctx.fillStyle = '#EEE448';
+			}
+			if (this.result[i][j]) {
+				ctx.fillStyle = '#ff0000';
 			}
 			ctx.fillRect(j * w, i * h, w , h);
 		}
