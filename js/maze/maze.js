@@ -42,7 +42,7 @@ Maze.prototype.parse2Array = function() {
 	let vistited = [],
 	path = [];
 	if (!n || !m) {
-		console.error('error: this is not a correct maze file');
+		console.warn('error: this is not a correct maze file');
 		return; 
 	}
 	let mazeArr = [];
@@ -55,7 +55,7 @@ Maze.prototype.parse2Array = function() {
 			visiteItem[j] = false;
 		}
 		vistited[i-1] = visiteItem;
-		path[i-1] = visiteItem;
+		path[i-1] = visiteItem.slice();
 	}
 	// 添加对象属性
 	this.n = n;
@@ -70,7 +70,7 @@ Maze.prototype.parse2Array = function() {
 
 Maze.prototype.getMaze = function(i,j){
 	if (i > this.n || j > this.m || i < 0 || j < 0) {
-		console.error('ArrayIndexOutOfBoundsException i：'+i+', j:'+j); 
+		console.warn('ArrayIndexOutOfBoundsException i：'+i+', j:'+j); 
 		return;
 	}
 	return this.mazeArr[i][j];
@@ -111,7 +111,7 @@ Maze.prototype.move = function(x,y){
 }
 
 Maze.prototype.stepInMaze = function(x,y){
-	if (x < this.n && y < this.m && x >= 0 && y >= 0) {
+	if (x < this.n && y < this.m) {
 		return true;
 	}
 	return false;
@@ -120,15 +120,16 @@ Maze.prototype.stepInMaze = function(x,y){
 Maze.prototype.render = function(){
 	let self = this,
 	path = this.path;
-	function animation(){
-		if (steps.length <1) {
+	(function animation(){
+		if (self.steps.length <1) {
+			clearInterval(self.intervalId);
 			return;
 		}
-		let step = self.steps.unshift();
+		let step = self.steps.shift();
 		step.forward(path);
 		self.drawMap(path);
 		self.timeoutId = setTimeout(animation,10);
-	}
+	})();
 }
 
 /**
