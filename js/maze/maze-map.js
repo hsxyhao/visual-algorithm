@@ -87,7 +87,7 @@ MazeMap.prototype.oneStep = function(ctx,w,h) {
 MazeMap.prototype.twoStep = function(ctx,w,h){
 	let enter = this.enterPos; 
 	this.mazeArr = new MazeArray('random');
-	this.stackMove(enter.X,enter.Y+1);
+	this.heapMove(enter.X,enter.Y+1);
 	// 开始渲染地图
 	this.render(ctx,w,h);
 }
@@ -188,7 +188,7 @@ MazeMap.prototype.render = function(ctx,w,h){
 		let step = self.steps.shift();
 		step.forward(step.t==='step'?map:mist);
 		self.drawMap(map,mist,ctx,w,h);
-		self.timeoutId = setTimeout(animation,4);
+		self.timeoutId = setTimeout(animation);
 	})();
 }
 
@@ -256,19 +256,35 @@ function MazeArray(type){
 }
 
 MazeArray.prototype.set = function(value){
-	this.arr.push(value);
+	if (Math.random() < 0.5) {
+		this.arr.push(value);
+	} else{
+		this.arr.unshift(value);
+	}
 }
 
 MazeArray.prototype._random = function(){
-	let index = Math.floor(Math.random() * this.arr.length);
-	let returnValue = this.arr[index];
-	if (index !== this.arr.length - 1) {
-		this.arr[index] = this.arr.pop();
-	} else {
-		this.arr.pop();
+	if (Math.random() < 0.5) {
+		return this.arr.pop();
+	} else{
+		return this.arr.shift();
 	}
-	return returnValue;
 }
+
+// MazeArray.prototype.set = function(value){
+// 	this.arr.push(value);
+// }
+
+// MazeArray.prototype._random = function(){
+// 	let index = Math.floor(Math.random() * this.arr.length);
+// 	let returnValue = this.arr[index];
+// 	if (index !== this.arr.length - 1) {
+// 		this.arr[index] = this.arr.pop();
+// 	} else {
+// 		this.arr.pop();
+// 	}
+// 	return returnValue;
+// }
 
 MazeArray.prototype._stack = function(){
 	return this.arr.pop();
