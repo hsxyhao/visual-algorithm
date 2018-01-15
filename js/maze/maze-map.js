@@ -16,26 +16,6 @@ function MazeMap(n,m){
 	this.m = m;
 	this.enterPos = {X:1,Y:0};
 	this.existPos = {X:n - 2,Y:m-1};
-	let map = [],
-	visited = [];
-	for(let i = 0; i < n; i++){
-		let mapItem = [],
-		visitedItem = [];
-		for(let j = 0; j < m; j++){
-			if (i%2===1 && j%2 === 1) {
-				mapItem[j] = true;
-			} else {
-				mapItem[j] = false;
-			}
-			visitedItem[i] = false;
-		}
-		map[i] = mapItem;
-		visited[i] = visitedItem;
-	}
-	map[this.enterPos.X][this.enterPos.Y] = true;
-	map[this.existPos.X][this.existPos.Y] = true;
-	this.map = map;
-	this.visited = visited;
 	this.drection = [[-1,0],[0,1],[1,0],[0,-1]];// 上 右 下 左
 	// this.drection = [[0,1],[1,0],[-1,0],[0,-1]]; 右 左 下 上
 	this.steps = [];
@@ -50,9 +30,39 @@ MazeMap.prototype.draw = function(canvas) {
 	canvas.width = this.n * config.W;
 	canvas.height = this.m * config.H;
 	let ctx = canvas.getContext('2d');
+	if (this.timeoutId) {
+		clearTimeout(this.timeoutId);
+	}
+	this.initData(this.n,this.m);
 	this.oneStep(ctx, config.W, config.H);
 	this.twoStep(ctx, config.W, config.H);
 };
+
+MazeMap.prototype.initData = function(n,m){
+	let map = [],
+	visited = [],
+	mist = [];
+	for(let i = 0; i < n; i++){
+		let mapItem = [],
+		visitedItem = [];
+		for(let j = 0; j < m; j++){
+			if (i%2===1 && j%2 === 1) {
+				mapItem[j] = true;
+			} else {
+				mapItem[j] = false;
+			}
+			visitedItem[j] = false;
+		}
+		map[i] = mapItem;
+		visited[i] = visitedItem;
+		mist[i] = visitedItem.slice();
+	}
+	map[this.enterPos.X][this.enterPos.Y] = true;
+	map[this.existPos.X][this.existPos.Y] = true;
+	this.map = map;
+	this.visited = visited;
+	this.mist = mist;
+}
 
 MazeMap.prototype.oneStep = function(ctx,w,h) {
 	let n = this.n,
@@ -92,6 +102,7 @@ MazeMap.prototype.heapMove = function(x,y){
 	let heap  = this.mazeArr;
 	heap.set({x:x,y:y});
 	this.visited[x][y] = true;
+	this.steps.push(new Step(x,y,'mist'));
 	while(!heap.empty()){
 		let pos = heap.get();
 		let x = pos.x,
@@ -104,7 +115,8 @@ MazeMap.prototype.heapMove = function(x,y){
 				!this.visited[nextX][nextY]) {
 				heap.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
-				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
+				this.steps.push(new Step(nextX,nextY,'mist'));
+				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
 			}
 		}
 	}
@@ -120,11 +132,11 @@ MazeMap.prototype.stackMove = function(x,y){
 	let stack  = this.mazeArr;
 	stack.set({x:x,y:y});
 	this.visited[x][y] = true;
+	this.steps.push(new Step(x,y,'mist'));
 	while(!stack.empty()){
 		let pos = stack.get();
 		let x = pos.x,
 		y = pos.y;
-
 		for(let i = 0; i < 4; i++){
 			let nextX = x + this.drection[i][0] * 2,
 				nextY = y + this.drection[i][1] * 2;
@@ -132,7 +144,8 @@ MazeMap.prototype.stackMove = function(x,y){
 				!this.visited[nextX][nextY]) {
 				stack.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
-				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
+				this.steps.push(new Step(nextX,nextY,'mist'));
+				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
 			}
 		}
 	}
@@ -150,12 +163,14 @@ MazeMap.prototype.recursiveTraverse = function(x,y){
 		return;
 	}
 	this.visited[x][y] = true;
+	this.steps.push(new Step(x,y,'mist'));
 	for(let i = 0; i < 4; i++){
 		let nextX = x + this.drection[i][0] * 2,
 			nextY = y + this.drection[i][1] * 2;
 		if (this.inMaze(nextX,nextY) &&
 			!this.visited[nextX][nextY]) {
-			this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
+			this.steps.push(new Step(nextX,nextY,'mist'));
+			this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
 			this.recursiveTraverse(nextX,nextY);
 		}
 	}
@@ -163,25 +178,28 @@ MazeMap.prototype.recursiveTraverse = function(x,y){
 
 MazeMap.prototype.render = function(ctx,w,h){
 	let self = this,
-	map = this.map;
+	map = this.map,
+	mist = this.mist;
 	(function animation(){
 		if (self.steps.length <1) {
-			clearInterval(self.intervalId);
+			clearTimeout(self.timeoutId);
 			return;
 		}
 		let step = self.steps.shift();
-		step.forward(map);
-		self.drawMap(map,ctx,w,h);
+		step.forward(step.t==='step'?map:mist);
+		self.drawMap(map,mist,ctx,w,h);
 		self.timeoutId = setTimeout(animation,4);
 	})();
 }
 
-MazeMap.prototype.drawMap = function(map,ctx,w,h){
+MazeMap.prototype.drawMap = function(map,mist,ctx,w,h){
 	let n = this.n,
 	m = this.m;
 	for(let i = 0; i < n; i++){
 		for(let j = 0; j < m; j++){
-			if (map[i][j]) {
+			if (!mist[i][j]) {
+				ctx.fillStyle = '#000'
+			} else if (map[i][j]) {
 				ctx.fillStyle = '#fff'
 			} else{
 				ctx.fillStyle = '#009EF4'
@@ -197,14 +215,25 @@ MazeMap.prototype.drawMap = function(map,ctx,w,h){
  * @param {[integer]} x [迷宫x坐标]
  * @param {[integer]} y [迷宫y坐标]
  */
-function Step(x,y,value){
+function Step(x,y,t,value){
 	this.x = x;
 	this.y = y;
-	this.v = value;
+	this.t = t || 'step';
+	this.v = value || true;
 }
 
-Step.prototype.forward = function(maze){
-	maze[this.x][this.y] = this.v;
+Step.prototype.forward = function(arr){
+	let x = this.x,
+	y = this.y;
+	if (this.t === 'step') {
+		arr[x][y] = this.v;
+	} else {
+		for(let i = x-1;i <= x+1;i++) {
+			for (let j = y-1;j <= y+1;j++) {
+				arr[i][j] = true;	
+			}
+		}
+	}
 }
 
 /**
