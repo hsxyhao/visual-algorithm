@@ -36,7 +36,7 @@ function MazeMap(n,m){
 	map[this.existPos.X][this.existPos.Y] = true;
 	this.map = map;
 	this.visited = visited;
-	this.drection = [[-1,0],[0,1],[1,0],[0,-1]];
+	this.drection = [[0,1],[1,0],[-1,0],[0,-1]];
 	this.steps = [];
 }
 

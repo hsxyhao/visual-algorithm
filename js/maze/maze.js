@@ -99,6 +99,7 @@ Maze.prototype.heapMove = function(x,y){
 		this.steps.push(new Step(x,y,true));
 		// 判断当前坐标是不是迷宫出口
 		if (x === this.existPos.X && y === this.existPos.Y) {
+			heap.push({x:this.existPos.X,y:this.existPos.Y,prev:pos});
 			this.findPath(pos);
 			isSolved = true;
 			return true;
@@ -109,7 +110,7 @@ Maze.prototype.heapMove = function(x,y){
 			if (this.stepInMaze(nextX,nextY) 
 				&& this.getMaze(nextX,nextY) === this.road
 				&& !this.vistited[nextX][nextY]) {
-				heap.push({x:nextX,y:nextY,prev:{x:x,y:y}});
+				heap.push({x:nextX,y:nextY,prev:pos});
 				this.vistited[nextX][nextY] = true;
 			}
 		}
@@ -137,6 +138,7 @@ Maze.prototype.stackMove = function(x,y){
 		this.steps.push(new Step(x,y,true));
 		// 判断当前坐标是不是迷宫出口
 		if (x === this.existPos.X && y === this.existPos.Y) {
+			stack.push({x:this.existPos.X,y:this.existPos.Y,prev:pos});
 			this.findPath(pos);
 			isSolved = true;
 			return true;
@@ -147,20 +149,21 @@ Maze.prototype.stackMove = function(x,y){
 			if (this.stepInMaze(nextX,nextY) 
 				&& this.getMaze(nextX,nextY) === this.road
 				&& !this.vistited[nextX][nextY]) {
-				stack.push({x:nextX,y:nextY,prev:{x:x,y:y}});
+				stack.push({x:nextX,y:nextY,prev:pos});
 				this.vistited[nextX][nextY] = true;
 			}
 		}
 	}
 	if (!isSolved) {
 		console.warn('The maze has no solution');
+		return false;
 	}
 }
 
 Maze.prototype.findPath = function(pos){
-	let cur = pos.prev;
+	let cur = pos;
 	while (cur!=null) {
-		this.result[cur.x][cur.y] = true;
+		this.steps.push(new Step(cur.x,cur.y,2));
 		cur = cur.prev;
 	}
 }
@@ -273,7 +276,7 @@ Maze.prototype.drawMap = function(path){
 			if (path[i][j]) {
 				ctx.fillStyle = '#EEE448';
 			}
-			if (this.result[i][j]) {
+			if (path[i][j] === 2) {
 				ctx.fillStyle = '#ff0000';
 			}
 			ctx.fillRect(j * w, i * h, w , h);
