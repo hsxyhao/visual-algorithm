@@ -76,9 +76,38 @@ MazeMap.prototype.oneStep = function(ctx,w,h) {
 
 MazeMap.prototype.twoStep = function(ctx,w,h){
 	let enter = this.enterPos; 
-	this.stackMove(enter.X,enter.Y+1);
+	this.heapMove(enter.X,enter.Y+1);
 	// 开始渲染地图
 	this.render(ctx,w,h);
+}
+
+/**
+ * [stackMove 广度优先遍历算法生成迷宫]
+ * @param  {[integer]} x [迷宫入口X坐标]
+ * @param  {[integer]} y [迷宫入口Y坐标]
+ * @return {[type]}   [description]
+ */
+MazeMap.prototype.heapMove = function(x,y){
+
+	let heap  = [];
+	heap.push({x:x,y:y});
+	this.visited[x][y] = true;
+	while(heap.length !== 0){
+		let pos = heap.shift();
+		let x = pos.x,
+		y = pos.y;
+
+		for(let i = 0; i < 4; i++){
+			let nextX = x + this.drection[i][0] * 2,
+				nextY = y + this.drection[i][1] * 2;
+			if (this.inMaze(nextX,nextY) &&
+				!this.visited[nextX][nextY]) {
+				heap.push({x:nextX,y:nextY});
+				this.visited[nextX][nextY] = true;
+				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
+			}
+		}
+	}
 }
 
 /**
@@ -108,7 +137,6 @@ MazeMap.prototype.stackMove = function(x,y){
 			}
 		}
 	}
-
 }
 
 /**
