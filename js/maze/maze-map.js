@@ -36,7 +36,8 @@ function MazeMap(n,m){
 	map[this.existPos.X][this.existPos.Y] = true;
 	this.map = map;
 	this.visited = visited;
-	this.drection = [[0,1],[1,0],[-1,0],[0,-1]];
+	this.drection = [[-1,0],[0,1],[1,0],[0,-1]];// 上 右 下 左
+	// this.drection = [[0,1],[1,0],[-1,0],[0,-1]]; 右 左 下 上
 	this.steps = [];
 }
 
@@ -75,11 +76,47 @@ MazeMap.prototype.oneStep = function(ctx,w,h) {
 
 MazeMap.prototype.twoStep = function(ctx,w,h){
 	let enter = this.enterPos; 
-	this.recursiveTraverse(enter.X,enter.Y+1);
+	this.stackMove(enter.X,enter.Y+1);
 	// 开始渲染地图
 	this.render(ctx,w,h);
 }
 
+/**
+ * [stackMove 非递归深度优先遍历算法生成迷宫]
+ * @param  {[integer]} x [迷宫入口X坐标]
+ * @param  {[integer]} y [迷宫入口Y坐标]
+ * @return {[type]}   [description]
+ */
+MazeMap.prototype.stackMove = function(x,y){
+
+	let stack  = [];
+	stack.push({x:x,y:y});
+	this.visited[x][y] = true;
+	while(stack.length !== 0){
+		let pos = stack.pop();
+		let x = pos.x,
+		y = pos.y;
+
+		for(let i = 0; i < 4; i++){
+			let nextX = x + this.drection[i][0] * 2,
+				nextY = y + this.drection[i][1] * 2;
+			if (this.inMaze(nextX,nextY) &&
+				!this.visited[nextX][nextY]) {
+				stack.push({x:nextX,y:nextY});
+				this.visited[nextX][nextY] = true;
+				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
+			}
+		}
+	}
+
+}
+
+/**
+ * [recursiveTraverse 深度优先遍历递归算法生成迷宫地图]
+ * @param  {[integer]} x [迷宫入口X坐标]
+ * @param  {[integer]} y [迷宫入口Y坐标]
+ * @return {[type]}   [description]
+ */
 MazeMap.prototype.recursiveTraverse = function(x,y){
 	if (!this.inMaze(x,y)) {
 		console.warn('current position is not in maze');
