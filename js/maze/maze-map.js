@@ -76,7 +76,8 @@ MazeMap.prototype.oneStep = function(ctx,w,h) {
 
 MazeMap.prototype.twoStep = function(ctx,w,h){
 	let enter = this.enterPos; 
-	this.heapMove(enter.X,enter.Y+1);
+	this.mazeArr = new MazeArray('random');
+	this.stackMove(enter.X,enter.Y+1);
 	// 开始渲染地图
 	this.render(ctx,w,h);
 }
@@ -88,12 +89,11 @@ MazeMap.prototype.twoStep = function(ctx,w,h){
  * @return {[type]}   [description]
  */
 MazeMap.prototype.heapMove = function(x,y){
-
-	let heap  = [];
-	heap.push({x:x,y:y});
+	let heap  = this.mazeArr;
+	heap.set({x:x,y:y});
 	this.visited[x][y] = true;
-	while(heap.length !== 0){
-		let pos = heap.shift();
+	while(!heap.empty()){
+		let pos = heap.get();
 		let x = pos.x,
 		y = pos.y;
 
@@ -102,7 +102,7 @@ MazeMap.prototype.heapMove = function(x,y){
 				nextY = y + this.drection[i][1] * 2;
 			if (this.inMaze(nextX,nextY) &&
 				!this.visited[nextX][nextY]) {
-				heap.push({x:nextX,y:nextY});
+				heap.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
 				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
 			}
@@ -117,12 +117,11 @@ MazeMap.prototype.heapMove = function(x,y){
  * @return {[type]}   [description]
  */
 MazeMap.prototype.stackMove = function(x,y){
-
-	let stack  = [];
-	stack.push({x:x,y:y});
+	let stack  = this.mazeArr;
+	stack.set({x:x,y:y});
 	this.visited[x][y] = true;
-	while(stack.length !== 0){
-		let pos = stack.pop();
+	while(!stack.empty()){
+		let pos = stack.get();
 		let x = pos.x,
 		y = pos.y;
 
@@ -131,7 +130,7 @@ MazeMap.prototype.stackMove = function(x,y){
 				nextY = y + this.drection[i][1] * 2;
 			if (this.inMaze(nextX,nextY) &&
 				!this.visited[nextX][nextY]) {
-				stack.push({x:nextX,y:nextY});
+				stack.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
 				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1],true));
 			}
@@ -206,4 +205,49 @@ function Step(x,y,value){
 
 Step.prototype.forward = function(maze){
 	maze[this.x][this.y] = this.v;
+}
+
+/**
+ * [MazeArray 用于生成迷宫的专用]
+ * @param {[type]} type [数组操作(获取一个元素)类型，类型有以下：stack，heap，random]
+ */
+function MazeArray(type){
+	this.arr = [];
+	this.type = type;
+	if (!type || type === 'stack') {
+		// 默认使用栈方式
+		MazeArray.prototype.get = this._stack;
+	} else if(type === 'heap') {
+		MazeArray.prototype.get = this._heap;
+	} else if(type === 'random') {
+		MazeArray.prototype.get = this._random;
+	} else {
+		console.warn('The value of type is illegal');
+	}
+}
+
+MazeArray.prototype.set = function(value){
+	this.arr.push(value);
+}
+
+MazeArray.prototype._random = function(){
+	let index = Math.floor(Math.random() * this.arr.length);
+	let returnValue = this.arr[index];
+	if (index !== this.arr.length - 1) {
+		this.arr[index] = this.arr.pop();
+	} else {
+		this.arr.pop();
+	}
+	return returnValue;
+}
+
+MazeArray.prototype._stack = function(){
+	return this.arr.pop();
+}
+MazeArray.prototype._heap = function(){
+	return this.arr.shift();
+}
+
+MazeArray.prototype.empty = function(){
+	return this.arr && this.arr.length === 0;
 }
