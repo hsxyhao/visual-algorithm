@@ -88,14 +88,6 @@ Maze.prototype.parse2Array = function() {
 	this.road = ' ';
 };
 
-Maze.prototype.getMaze = function(i,j){
-	if (i > this.n || j > this.m || i < 0 || j < 0) {
-		console.warn('ArrayIndexOutOfBoundsException i：'+i+', j:'+j); 
-		return;
-	}
-	return this.mazeArr[i][j];
-}
-
 /**
  * [solveMaze 迷宫求解，三种方式：深度递归优先，深度非递归优先，广度优先]
  * @return {[type]} [description]
@@ -107,6 +99,19 @@ Maze.prototype.solveMaze = function(){
 	}
 	this.heapMove(this.enterPos.X,this.enterPos.Y);
 	this.render();
+}
+
+/**
+ * [findPath 回溯寻找路径]
+ * @param  {[type]} pos [迷宫出口]
+ * @return {[type]}     [description]
+ */
+Maze.prototype.findPath = function(pos){
+	let cur = pos;
+	while (cur!=null) {
+		this.steps.push(new Step(cur.x,cur.y,2));
+		cur = cur.prev;
+	}
 }
 
 Maze.prototype.heapMove = function(x,y){
@@ -184,19 +189,6 @@ Maze.prototype.stackMove = function(x,y){
 }
 
 /**
- * [findPath 回溯寻找路径]
- * @param  {[type]} pos [迷宫出口]
- * @return {[type]}     [description]
- */
-Maze.prototype.findPath = function(pos){
-	let cur = pos;
-	while (cur!=null) {
-		this.steps.push(new Step(cur.x,cur.y,2));
-		cur = cur.prev;
-	}
-}
-
-/**
  * [recursiveMove 递归法解决迷宫问题]
  * @param  {[type]} x [进入x坐标]
  * @param  {[type]} y [进入y坐标]
@@ -244,6 +236,14 @@ Maze.prototype.stepInMaze = function(x,y){
 		return true;
 	}
 	return false;
+}
+
+Maze.prototype.getMaze = function(i,j){
+	if (i > this.n || j > this.m || i < 0 || j < 0) {
+		console.warn('ArrayIndexOutOfBoundsException i：'+i+', j:'+j); 
+		return;
+	}
+	return this.mazeArr[i][j];
 }
 
 Maze.prototype.render = function(){

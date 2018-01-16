@@ -4,32 +4,136 @@
 	<meta charset="UTF-8">
 	<title>迷宫</title>
 	<link rel="stylesheet" type="text/css" href="css/maze.css">
+	<link rel="stylesheet" type="text/css" href="font/iconfont.css">
 	<script type="text/javascript" src="js/maze/maze.js"></script>
 	<script type="text/javascript" src="js/maze/maze-map.js"></script>
+	<style type="text/css">
+		.action-bar{
+			display: flex;
+		    width: 100%;
+		    height: 30px;
+		    border-top: 1px solid #0d859d;
+		    border-bottom: 1px solid #0d859d;
+		}
+		.action-bar > div{
+			display: flex;
+			align-items: center;
+		}
+		.button{
+		    cursor: pointer;
+   			margin: 0 5px;
+   			color: #00D5FF;
+		}
+		.bar-left{
+			flex: 1;
+		}
+		.bar-right{
+			justify-content: center;
+			width: 50px;
+		}
+		.button:active{
+			color: #0A98B4;
+		}
+		.action-filter{
+		    height: 60px;
+			font-size: 12px;
+			transition: all 0.2s linear;
+		}
+		.filter-column{
+			display: flex;
+			align-items: baseline;
+			cursor: pointer;
+			margin: 10px 5px;
+		}
+		.column-title{
+   			padding: 3px 5px;
+		    background-color: #00D5FF;
+		    color: #FFF;
+		    font-weight: 700;
+		    border-radius: 2px;
+		}
+		.column-item{
+			margin: 0 5px;
+		}
+		.column-item > .active{
+			color: #00D5FF;
+		}
+		.split-line{
+		    width: 1px;
+		    height: 15px;
+		    background-color: #aeaeae;
+		}
+	</style>
 </head>
 <body>
 	<div class="box">
+		<div class="action">
+			<div class="action-bar">
+				<div class="bar-left">
+					<div class="button iconfont icon-play"></div>
+					<div class="button iconfont icon-refresh"></div>
+					<div class="button iconfont icon-clear"></div>
+					<div class="split-line"></div>
+					<div class="button iconfont icon-sub"></div>
+					<div class="button iconfont icon-add"></div>
+					<div class="split-line"></div>
+					<div class="button iconfont icon-file"></div>
+					<div class="button iconfont icon-find"></div>
+				</div>
+				<div class="bar-right">
+					<div class="button iconfont icon-filter"></div>
+				</div>
+			</div>
+			<div class="action-filter">
+				<div class="filter-column">
+					<div class="column-title">数据生成方式</div>
+					<div class="column-item ">
+						<span class="iconfont icon-radio active"></span>
+						<span>自动随机生成</span>
+					</div>
+					<div class="column-item">
+						<span class="iconfont icon-radio"></span>
+						<span>外部文件导入</span>
+					</div>
+				</div>
+				<div class="filter-column">
+					<div class="column-title">迷宫求解方式</div>
+					<div class="column-item">
+						<span class="iconfont icon-radio active"></span>
+						<span>递归-深度优先</span>
+					</div>
+					<div class="column-item">
+						<span class="iconfont icon-radio"></span>
+						<span>非递归-深度优先</span>
+					</div>
+					<div class="column-item">
+						<span class="iconfont icon-radio"></span>
+						<span>广度优先</span>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="maze">
 			<canvas id="mazeCanvas">浏览器不支持canvas</canvas>
 		</div>
-		<div class="action">
-			<input id="fileSelector" style="width:200px" type="file" name="file" value="导入迷宫数据">
-			<div class="btn create">文件方式</div>
-			<div class="btn create2">内存方式</div>
-			<div class="btn solve">求解迷宫</div>
-		</div>
 	</div>
+	<input id="fileSelector" hidden="" style="width:200px" type="file" name="file" value="导入迷宫数据">
 	<script type="text/javascript">
 		var maze = new Maze('fileSelector');
 		var mazeMap = new MazeMap(101,101);
-		let btnCreate = document.querySelector('.create');
-		let btnCreate2 = document.querySelector('.create2');
-		let btnSolve = document.querySelector('.solve');
-		let canvas = document.querySelector('#mazeCanvas');
+
+		let icon_play = document.querySelector('.icon-play'),
+		btnCreate2 = document.querySelector('.create2'),
+		icon_find = document.querySelector('.icon-find'),
+		canvas = document.querySelector('#mazeCanvas'),
+		filter = document.querySelector('.icon-filter'),
+		action_filter = document.querySelector('.action-filter'),
+		fileInput = document.querySelector('#fileSelector'),
+		icon_file = document.querySelector('.icon-file'),
+		filter_columns = document.querySelectorAll('.filter-column');
 
 		maze.bindCanvas(mazeMap.n,mazeMap.m,canvas);
 
-		let fileInput = document.querySelector('#fileSelector')
 		fileInput.onchange = (event) => {
 			let files = event.target.files;
 			let reader = new FileReader();
@@ -39,15 +143,25 @@
 				maze.parse2Array();
 			}
 		}
-		btnCreate.onclick = () => {
+
+		icon_file.onclick = () => {
+			fileInput.click();
+		}
+
+		filter.onclick = () => {
+			let height = action_filter.style.height;
+			if (height === '') {
+				action_filter.style.height = '0px';
+			} else {
+				action_filter.style.height = '';
+			}
+		}
+
+		icon_play.onclick = () => {
 			maze.createMazeMap();
 		}
-		btnCreate2.onclick = () => {
-			mazeMap.draw(canvas);
-			let data = mazeMap.map;
-			maze.initMazeData(mazeMap.n,mazeMap.m,data);
-		}
-		btnSolve.onclick = () => {
+
+		icon_find.onclick = () => {
 			maze.solveMaze();
 		}
 	</script>
