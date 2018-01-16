@@ -26,6 +26,7 @@ body{
 .maze > canvas{
 	width: 100%;
 	height: 100%;
+    background: #b2b2b2;
 }
 .btn{
 	padding: 5px;

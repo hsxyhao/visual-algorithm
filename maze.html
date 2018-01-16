@@ -26,14 +26,29 @@
 		let btnCreate2 = document.querySelector('.create2');
 		let btnSolve = document.querySelector('.solve');
 		let canvas = document.querySelector('#mazeCanvas');
+
+		maze.bindCanvas(mazeMap.n,mazeMap.m,canvas);
+
+		let fileInput = document.querySelector('#fileSelector')
+		fileInput.onchange = (event) => {
+			let files = event.target.files;
+			let reader = new FileReader();
+			reader.readAsText(files[0],'UTF-8');
+			reader.onloadend = (target) => {
+				maze.mazeText = reader.result
+				maze.parse2Array();
+			}
+		}
 		btnCreate.onclick = () => {
-			maze.createMazeMap(canvas);
+			maze.createMazeMap();
 		}
 		btnCreate2.onclick = () => {
 			mazeMap.draw(canvas);
+			let data = mazeMap.map;
+			maze.initMazeData(mazeMap.n,mazeMap.m,data);
 		}
 		btnSolve.onclick = () => {
-			maze.solveMaze(canvas,maze.mazeArr);
+			maze.solveMaze();
 		}
 	</script>
 </body>

@@ -2,28 +2,44 @@
  * 迷宫数据对象
  * @param {[string]} fileInputClassName [文件选择元素id名]
  */
-function Maze(fileInputId) {
-	let fileInput = document.querySelector('#'+fileInputId),
-	reader,
-	self = this;
-	this.fileInput = fileInputId;
-	this.reader = reader;
-	this.wall = '=';
-	this.road = ' ';
+function Maze() {
 	this.drection = [[-1,0],[0,1],[1,0],[0,-1]];
 	this.steps = [];
 	// parse、ready分别表示地图解析状态以及地图绘制状态
 	this.parse = false;
 	this.ready = false;
-	fileInput.onchange = (event) => {
-		let files = event.target.files;
-		reader = new FileReader();
-		reader.readAsText(files[0],'UTF-8');
-		reader.onloadend = (target) => {
-			self.mazeText = reader.result
-			self.parse2Array();
-		}
+}
+
+Maze.prototype.initMazeData = function(n,m,arr){
+	if (!arr || !arr.length) {
+		return;
 	}
+	// 用于记录已经访问过的点
+	let vistited = [],
+	path = [],
+	result = [];
+	for(let i = 0; i <= n; i++){
+		let visiteItem = [];
+		for (let j = 0; j <= m; j++) {
+			visiteItem[j] = false;
+		}
+		vistited[i] = visiteItem;
+		path[i] = visiteItem.slice();
+		result[i] = visiteItem.slice();
+	}
+	// 添加对象属性
+	this.n = n;
+	this.m = m;
+	this.enterPos = {X:1,Y:0};
+	this.existPos = {X:n - 2,Y:m-1};
+	this.mazeArr = arr;
+	this.vistited = vistited;
+	this.result = result;
+	this.path = path;
+	this.parse = true;
+	this.ready = true;
+	this.wall = false;
+	this.road = true;
 }
 
 Maze.prototype.parse2Array = function() {
@@ -68,6 +84,8 @@ Maze.prototype.parse2Array = function() {
 	this.result = result;
 	this.path = path;
 	this.parse = true;
+	this.wall = '=';
+	this.road = ' ';
 };
 
 Maze.prototype.getMaze = function(i,j){
@@ -78,6 +96,10 @@ Maze.prototype.getMaze = function(i,j){
 	return this.mazeArr[i][j];
 }
 
+/**
+ * [solveMaze 迷宫求解，三种方式：深度递归优先，深度非递归优先，广度优先]
+ * @return {[type]} [description]
+ */
 Maze.prototype.solveMaze = function(){
 	if (!this.ready) {
 		console.warn('The map is not ready yet');
@@ -107,6 +129,7 @@ Maze.prototype.heapMove = function(x,y){
 		for (let i = 0; i < 4; i++) {
 			let nextX = x + this.drection[i][0],
 			nextY = y + this.drection[i][1];
+			// 判断当前坐标是不是在迷宫范围内，是否不为墙，以及是否没有访问过
 			if (this.stepInMaze(nextX,nextY) 
 				&& this.getMaze(nextX,nextY) === this.road
 				&& !this.vistited[nextX][nextY]) {
@@ -160,6 +183,11 @@ Maze.prototype.stackMove = function(x,y){
 	}
 }
 
+/**
+ * [findPath 回溯寻找路径]
+ * @param  {[type]} pos [迷宫出口]
+ * @return {[type]}     [description]
+ */
 Maze.prototype.findPath = function(pos){
 	let cur = pos;
 	while (cur!=null) {
@@ -200,7 +228,7 @@ Maze.prototype.stepForward = function(x,y,callback){
 		let nextX = x + this.drection[i][0],
 			nextY = y + this.drection[i][1];
 		if (this.stepInMaze(nextX,nextY) 
-			&& this.getMaze(nextX,nextY) === this.road
+			&& !this.getMaze(nextX,nextY)
 			&& !this.vistited[nextX][nextY]) {
 			if(callback && callback(nextX,nextY)){
 				return true;
@@ -226,11 +254,22 @@ Maze.prototype.render = function(){
 			clearInterval(self.intervalId);
 			return;
 		}
-		let step = self.steps.shift();
-		step.forward(path);
+		for(let i = 0; i < 20; i++){
+			let step = self.steps.shift();
+			if (step) {
+				step.forward(path);
+			}
+		}
 		self.drawMap(path);
 		self.timeoutId = setTimeout(animation,4);
 	})();
+}
+
+Maze.prototype.bindCanvas = function(n,m,canvas){
+	this.canvas = canvas;
+	canvas.width = 3 * n;
+	canvas.height = 2 * m;
+	this.ctx = canvas.getContext('2d');
 }
 
 /**
@@ -240,15 +279,15 @@ Maze.prototype.render = function(){
  * @param  {[Array]} path    [求解地图已经走过的路径坐标]
  * @return {[type]}         [description]
  */
-Maze.prototype.createMazeMap = function(canvas){
+Maze.prototype.createMazeMap = function(){
 	if (!this.parse) {
 		console.warn("The map hasn't been parsed yet");
 		return;
 	}
-	this.canvas = canvas;
-	canvas.width = 3 * this.n;
-	canvas.height = 2 * this.m;
-	this.ctx = canvas.getContext('2d');
+	if (!this.ctx) {
+		console.warn('the canvas context can not be null');
+		return;
+	}
 	this.drawMap(this.path);
 	this.ready = true;
 }
@@ -273,11 +312,15 @@ Maze.prototype.drawMap = function(path){
 			} else {
 				ctx.fillStyle = '#fff';
 			}
+			if (!path[i]) {
+				console.log();
+			}
 			if (path[i][j]) {
 				ctx.fillStyle = '#EEE448';
 			}
+			// 回溯寻找迷宫出口路线
 			if (path[i][j] === 2) {
-				ctx.fillStyle = '#ff0000';
+				ctx.fillStyle = '#fff';
 			}
 			ctx.fillRect(j * w, i * h, w , h);
 		}

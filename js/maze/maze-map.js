@@ -34,8 +34,10 @@ MazeMap.prototype.draw = function(canvas) {
 		clearTimeout(this.timeoutId);
 	}
 	this.initData(this.n,this.m);
-	this.oneStep(ctx, config.W, config.H);
-	this.twoStep(ctx, config.W, config.H);
+	// 绘制迷宫雏形 可注释跳过
+	// this.oneStep(ctx, config.W, config.H);
+	// 开始绘制迷宫
+	this.startDraw(ctx, config.W, config.H);
 };
 
 MazeMap.prototype.initData = function(n,m){
@@ -64,7 +66,14 @@ MazeMap.prototype.initData = function(n,m){
 	this.mist = mist;
 }
 
-MazeMap.prototype.oneStep = function(ctx,w,h) {
+/**
+ * [drawBase 绘制迷宫的雏形，可跳跃，帮助理解迷宫的生成思路]
+ * @param  {[type]} ctx [canvas context对象]
+ * @param  {[type]} w   [绘制宽度]
+ * @param  {[type]} h   [绘制高度]
+ * @return {[type]}     [description]
+ */
+MazeMap.prototype.drawBase = function(ctx,w,h) {
 	let n = this.n,
 	m = this.m;
 	for(let i = 0; i < n; i++){
@@ -77,14 +86,16 @@ MazeMap.prototype.oneStep = function(ctx,w,h) {
 			ctx.fillRect(j * w, i * h, w , h);
 		}
 	}
-	let enter = this.enterPos,
-	exist = this.existPos;
-	ctx.fillStyle = '#fff';
-	ctx.fillRect(enter.Y * w, enter.X * h, w , h);
-	ctx.fillRect(exist.Y * w, exist.X * h, w , h);
 };
 
-MazeMap.prototype.twoStep = function(ctx,w,h){
+/**
+ * [startDraw 开始绘制迷宫地图]
+ * @param  {[type]} ctx [canvas context对象]
+ * @param  {[type]} w   [绘制宽度]
+ * @param  {[type]} h   [绘制高度]
+ * @return {[type]}     [description]
+ */
+MazeMap.prototype.startDraw = function(ctx,w,h){
 	let enter = this.enterPos; 
 	this.mazeArr = new MazeArray('random');
 	this.heapMove(enter.X,enter.Y+1);
@@ -102,7 +113,7 @@ MazeMap.prototype.heapMove = function(x,y){
 	let heap  = this.mazeArr;
 	heap.set({x:x,y:y});
 	this.visited[x][y] = true;
-	this.steps.push(new Step(x,y,'mist'));
+	this.steps.push(new MapStep(x,y,'mist'));
 	while(!heap.empty()){
 		let pos = heap.get();
 		let x = pos.x,
@@ -115,8 +126,8 @@ MazeMap.prototype.heapMove = function(x,y){
 				!this.visited[nextX][nextY]) {
 				heap.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
-				this.steps.push(new Step(nextX,nextY,'mist'));
-				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
+				this.steps.push(new MapStep(nextX,nextY,'mist'));
+				this.steps.push(new MapStep(x + this.drection[i][0],y + this.drection[i][1]));
 			}
 		}
 	}
@@ -132,7 +143,7 @@ MazeMap.prototype.stackMove = function(x,y){
 	let stack  = this.mazeArr;
 	stack.set({x:x,y:y});
 	this.visited[x][y] = true;
-	this.steps.push(new Step(x,y,'mist'));
+	this.steps.push(new MapStep(x,y,'mist'));
 	while(!stack.empty()){
 		let pos = stack.get();
 		let x = pos.x,
@@ -144,8 +155,8 @@ MazeMap.prototype.stackMove = function(x,y){
 				!this.visited[nextX][nextY]) {
 				stack.set({x:nextX,y:nextY});
 				this.visited[nextX][nextY] = true;
-				this.steps.push(new Step(nextX,nextY,'mist'));
-				this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
+				this.steps.push(new MapStep(nextX,nextY,'mist'));
+				this.steps.push(new MapStep(x + this.drection[i][0],y + this.drection[i][1]));
 			}
 		}
 	}
@@ -163,14 +174,14 @@ MazeMap.prototype.recursiveTraverse = function(x,y){
 		return;
 	}
 	this.visited[x][y] = true;
-	this.steps.push(new Step(x,y,'mist'));
+	this.steps.push(new MapStep(x,y,'mist'));
 	for(let i = 0; i < 4; i++){
 		let nextX = x + this.drection[i][0] * 2,
 			nextY = y + this.drection[i][1] * 2;
 		if (this.inMaze(nextX,nextY) &&
 			!this.visited[nextX][nextY]) {
-			this.steps.push(new Step(nextX,nextY,'mist'));
-			this.steps.push(new Step(x + this.drection[i][0],y + this.drection[i][1]));
+			this.steps.push(new MapStep(nextX,nextY,'mist'));
+			this.steps.push(new MapStep(x + this.drection[i][0],y + this.drection[i][1]));
 			this.recursiveTraverse(nextX,nextY);
 		}
 	}
@@ -185,8 +196,12 @@ MazeMap.prototype.render = function(ctx,w,h){
 			clearTimeout(self.timeoutId);
 			return;
 		}
-		let step = self.steps.shift();
-		step.forward(step.t==='step'?map:mist);
+		for (let i = 0; i < 20; i++) {
+			let step = self.steps.shift();
+			if (step) {
+				step.forward(step.t==='step'?map:mist);
+			}
+		}
 		self.drawMap(map,mist,ctx,w,h);
 		self.timeoutId = setTimeout(animation);
 	})();
@@ -198,7 +213,7 @@ MazeMap.prototype.drawMap = function(map,mist,ctx,w,h){
 	for(let i = 0; i < n; i++){
 		for(let j = 0; j < m; j++){
 			if (!mist[i][j]) {
-				ctx.fillStyle = '#000'
+				continue;
 			} else if (map[i][j]) {
 				ctx.fillStyle = '#fff'
 			} else{
@@ -215,14 +230,14 @@ MazeMap.prototype.drawMap = function(map,mist,ctx,w,h){
  * @param {[integer]} x [迷宫x坐标]
  * @param {[integer]} y [迷宫y坐标]
  */
-function Step(x,y,t,value){
+function MapStep(x,y,t,value){
 	this.x = x;
 	this.y = y;
 	this.t = t || 'step';
 	this.v = value || true;
 }
 
-Step.prototype.forward = function(arr){
+MapStep.prototype.forward = function(arr){
 	let x = this.x,
 	y = this.y;
 	if (this.t === 'step') {
