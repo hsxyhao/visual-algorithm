@@ -92,12 +92,19 @@ Maze.prototype.parse2Array = function() {
  * [solveMaze 迷宫求解，三种方式：深度递归优先，深度非递归优先，广度优先]
  * @return {[type]} [description]
  */
-Maze.prototype.solveMaze = function(){
+Maze.prototype.solveMaze = function(type){
 	if (!this.ready) {
 		console.warn('The map is not ready yet');
 		return;
 	}
-	this.heapMove(this.enterPos.X,this.enterPos.Y);
+	this.type = type;
+	if (type === 1) {
+		this.recursiveMove(this.enterPos.X,this.enterPos.Y);
+	} else if (type === 2) {
+		this.stackMove(this.enterPos.X,this.enterPos.Y);
+	} else {
+		this.heapMove(this.enterPos.X,this.enterPos.Y);
+	}
 	this.render();
 }
 
@@ -220,7 +227,7 @@ Maze.prototype.stepForward = function(x,y,callback){
 		let nextX = x + this.drection[i][0],
 			nextY = y + this.drection[i][1];
 		if (this.stepInMaze(nextX,nextY) 
-			&& !this.getMaze(nextX,nextY)
+			&& this.getMaze(nextX,nextY) === this.road
 			&& !this.vistited[nextX][nextY]) {
 			if(callback && callback(nextX,nextY)){
 				return true;
@@ -232,10 +239,7 @@ Maze.prototype.stepForward = function(x,y,callback){
 }
 
 Maze.prototype.stepInMaze = function(x,y){
-	if (x < this.n && y < this.m) {
-		return true;
-	}
-	return false;
+	return x < this.n && y < this.m;
 }
 
 Maze.prototype.getMaze = function(i,j){

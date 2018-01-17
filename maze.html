@@ -43,7 +43,7 @@
 			display: flex;
 			align-items: baseline;
 			cursor: pointer;
-			margin: 10px 5px;
+			margin: 3px 5px;
 		}
 		.column-title{
    			padding: 3px 5px;
@@ -55,7 +55,7 @@
 		.column-item{
 			margin: 0 5px;
 		}
-		.column-item > .active{
+		.active > .iconfont{
 			color: #00D5FF;
 		}
 		.split-line{
@@ -77,36 +77,47 @@
 					<div class="button iconfont icon-sub"></div>
 					<div class="button iconfont icon-add"></div>
 					<div class="split-line"></div>
-					<div class="button iconfont icon-file"></div>
 					<div class="button iconfont icon-find"></div>
 				</div>
 				<div class="bar-right">
-					<div class="button iconfont icon-filter"></div>
+					<div class="button iconfont icon-filter" style="color: #759095"></div>
 				</div>
 			</div>
 			<div class="action-filter">
-				<div class="filter-column">
-					<div class="column-title">数据生成方式</div>
-					<div class="column-item ">
-						<span class="iconfont icon-radio active"></span>
-						<span>自动随机生成</span>
-					</div>
-					<div class="column-item">
+				<div class="filter-column source-type">
+					<div class="column-title">数据生成</div>
+					<div class="column-item active" data-value="1">
 						<span class="iconfont icon-radio"></span>
-						<span>外部文件导入</span>
+						<span>增强随机</span>
+					</div>
+					<div class="column-item" data-value="2">
+						<span class="iconfont icon-radio"></span>
+						<span>随机</span>
+					</div>
+					<div class="column-item" data-value="3">
+						<span class="iconfont icon-radio"></span>
+						<span>栈</span>
+					</div>
+					<div class="column-item" data-value="4">
+						<span class="iconfont icon-radio"></span>
+						<span>队列</span>
+					</div>
+					<div class="column-item" data-value="5">
+						<span class="iconfont icon-radio"></span>
+						<span>文件</span>
 					</div>
 				</div>
-				<div class="filter-column">
-					<div class="column-title">迷宫求解方式</div>
-					<div class="column-item">
-						<span class="iconfont icon-radio active"></span>
+				<div class="filter-column solve-type">
+					<div class="column-title">迷宫求解</div>
+					<div class="column-item active" data-value="1">
+						<span class="iconfont icon-radio"></span>
 						<span>递归-深度优先</span>
 					</div>
-					<div class="column-item">
+					<div class="column-item" data-value="2">
 						<span class="iconfont icon-radio"></span>
 						<span>非递归-深度优先</span>
 					</div>
-					<div class="column-item">
+					<div class="column-item" data-value="3">
 						<span class="iconfont icon-radio"></span>
 						<span>广度优先</span>
 					</div>
@@ -123,16 +134,43 @@
 		var mazeMap = new MazeMap(101,101);
 
 		let icon_play = document.querySelector('.icon-play'),
-		btnCreate2 = document.querySelector('.create2'),
+		actives = document.querySelectorAll('.column-item'),
 		icon_find = document.querySelector('.icon-find'),
 		canvas = document.querySelector('#mazeCanvas'),
 		filter = document.querySelector('.icon-filter'),
 		action_filter = document.querySelector('.action-filter'),
 		fileInput = document.querySelector('#fileSelector'),
 		icon_file = document.querySelector('.icon-file'),
-		filter_columns = document.querySelectorAll('.filter-column');
+		filter_columns = document.querySelectorAll('.filter-column'),
+		dataType = 1,
+		solveType = 1;
 
+		// 迷宫绑定画布对象
 		maze.bindCanvas(mazeMap.n,mazeMap.m,canvas);
+
+		actives.forEach((elem,index) => {
+			elem.onclick = (event) => {
+				let current = event.currentTarget;
+				let item = current;
+				while(item !== null){
+					item.classList.remove('active');
+					item = item.nextElementSibling;
+				}
+				item = current;
+				while(item !== null){
+					item.classList.remove('active');
+					item = item.previousElementSibling;
+				}
+				current.classList.add('active');
+				if (current.parentElement.classList.contains('source-type')) {
+					dataType = current.attributes['data-value'].nodeValue;
+				} else if (current.parentElement.classList.contains('solve-type')) {
+					solveType = current.attributes['data-value'].nodeValue;
+				} 
+				dataType = parseInt(dataType);
+				solveType = parseInt(solveType);
+			}
+		});
 
 		fileInput.onchange = (event) => {
 			let files = event.target.files;
@@ -141,11 +179,9 @@
 			reader.onloadend = (target) => {
 				maze.mazeText = reader.result
 				maze.parse2Array();
+				// 开始绘制地图
+				maze.createMazeMap();
 			}
-		}
-
-		icon_file.onclick = () => {
-			fileInput.click();
 		}
 
 		filter.onclick = () => {
@@ -158,11 +194,19 @@
 		}
 
 		icon_play.onclick = () => {
-			maze.createMazeMap();
+			if (dataType === 5) {
+				fileInput.click();
+			} else {
+				// 判断要生成的迷宫的随机性
+				mazeMap.setRandom(dataType);
+				mazeMap.draw(canvas);
+				let data = mazeMap.map;
+				maze.initMazeData(mazeMap.n,mazeMap.m,data);
+			}
 		}
 
 		icon_find.onclick = () => {
-			maze.solveMaze();
+			maze.solveMaze(solveType);
 		}
 	</script>
 </body>

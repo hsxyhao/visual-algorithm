@@ -16,6 +16,7 @@ function MazeMap(n,m){
 	this.m = m;
 	this.enterPos = {X:1,Y:0};
 	this.existPos = {X:n - 2,Y:m-1};
+	this.random = 1;
 	this.drection = [[-1,0],[0,1],[1,0],[0,-1]];// 上 右 下 左
 	// this.drection = [[0,1],[1,0],[-1,0],[0,-1]]; 右 左 下 上
 	this.steps = [];
@@ -97,7 +98,7 @@ MazeMap.prototype.drawBase = function(ctx,w,h) {
  */
 MazeMap.prototype.startDraw = function(ctx,w,h){
 	let enter = this.enterPos; 
-	this.mazeArr = new MazeArray('random');
+	this.mazeArr = new MazeArray(this.random);
 	this.heapMove(enter.X,enter.Y+1);
 	// 开始渲染地图
 	this.render(ctx,w,h);
@@ -187,6 +188,10 @@ MazeMap.prototype.recursiveTraverse = function(x,y){
 	}
 }
 
+MazeMap.prototype.setRandom = function(random){
+	this.random = random;
+}
+
 MazeMap.prototype.render = function(ctx,w,h){
 	let self = this,
 	map = this.map,
@@ -255,22 +260,33 @@ MapStep.prototype.forward = function(arr){
  * [MazeArray 用于生成迷宫的专用]
  * @param {[type]} type [数组操作(获取一个元素)类型，类型有以下：stack，heap，random]
  */
-function MazeArray(type){
+function MazeArray(random){
 	this.arr = [];
-	this.type = type;
-	if (!type || type === 'stack') {
-		// 默认使用栈方式
-		MazeArray.prototype.get = this._stack;
-	} else if(type === 'heap') {
-		MazeArray.prototype.get = this._heap;
-	} else if(type === 'random') {
-		MazeArray.prototype.get = this._random;
-	} else {
-		console.warn('The value of type is illegal');
-	}
+	this.type = random;
+	this.setRandom(random);
 }
 
-MazeArray.prototype.set = function(value){
+MazeArray.prototype.setRandom = function(random){
+	if (random === 1) {
+		// 增强随机
+		MazeArray.prototype.set = this._betterSet
+		MazeArray.prototype.get = this._betterGet
+	} else if (random === 2) {
+		// 普通随机
+		MazeArray.prototype.set = this._customSet
+		MazeArray.prototype.get = this._customGet
+	} else if (random === 3) {
+		// 栈方式生成
+		MazeArray.prototype.set = this._customSet
+		MazeArray.prototype.get = this._stack
+	} else {
+		// 队列方式生成
+		MazeArray.prototype.set = this._customSet
+		MazeArray.prototype.get = this._heap
+	}
+}
+// 迷宫生成随机性默认支持
+MazeArray.prototype._betterSet = function(value){
 	if (Math.random() < 0.5) {
 		this.arr.push(value);
 	} else{
@@ -278,7 +294,7 @@ MazeArray.prototype.set = function(value){
 	}
 }
 
-MazeArray.prototype._random = function(){
+MazeArray.prototype._betterGet = function(){
 	if (Math.random() < 0.5) {
 		return this.arr.pop();
 	} else{
@@ -286,20 +302,21 @@ MazeArray.prototype._random = function(){
 	}
 }
 
-// MazeArray.prototype.set = function(value){
-// 	this.arr.push(value);
-// }
+MazeArray.prototype._customSet = function(value){
+	this.arr.push(value);
+}
 
-// MazeArray.prototype._random = function(){
-// 	let index = Math.floor(Math.random() * this.arr.length);
-// 	let returnValue = this.arr[index];
-// 	if (index !== this.arr.length - 1) {
-// 		this.arr[index] = this.arr.pop();
-// 	} else {
-// 		this.arr.pop();
-// 	}
-// 	return returnValue;
-// }
+MazeArray.prototype._customGet = function(){
+	let index = Math.floor(Math.random() * this.arr.length);
+	let returnValue = this.arr[index];
+	if (index !== this.arr.length - 1) {
+		this.arr[index] = this.arr.pop();
+	} else {
+		this.arr.pop();
+	}
+	return returnValue;
+}
+// 迷宫生成随机性默认支持
 
 MazeArray.prototype._stack = function(){
 	return this.arr.pop();
